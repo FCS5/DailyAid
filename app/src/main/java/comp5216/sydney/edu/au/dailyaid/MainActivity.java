@@ -2,6 +2,10 @@ package comp5216.sydney.edu.au.dailyaid;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +14,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +23,10 @@ import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidDao;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidDatabase;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidRequest;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidUser;
+import comp5216.sydney.edu.au.dailyaid.databinding.ActivityHomepageBinding;
 
 public class MainActivity extends AppCompatActivity {
-
+    private ActivityHomepageBinding binding;
     DailyAidDao dao;
     DailyAidDatabase db;
     int userId;
@@ -27,7 +34,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.home_page);
+//        setContentView(R.layout.activity_homepage);
+        binding = ActivityHomepageBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications,
+                R.id.navigation_idk)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_homepage);
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(binding.navView, navController);
 
     }
 
