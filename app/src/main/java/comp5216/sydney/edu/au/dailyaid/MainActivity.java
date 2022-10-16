@@ -75,8 +75,6 @@ public class MainActivity extends AppCompatActivity {
      * location1 is the user's location
      * location2 is the request's location. */
     public double getDistance(String location1, String location2){
-        //********************************************************
-        // need to revise by location format in the db
         String[] st1 = location1.split(",");
         String[] st2 = location2.split(",");
         //0 latitude ; 1 longitude
@@ -100,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         if (sourceRequests != null){
             for (DailyAidRequest dar :sourceRequests){
                 // <1km
-                if (getDistance(dar.getLocation() , userLocation) <= 1){
+                if (getDistance(dar.getLocation() , userLocation) <= 1 && getDistance(dar.getLocation() , userLocation) > 0){
                     returnRequests.add(dar);
                 }
             }
@@ -179,9 +177,7 @@ public class MainActivity extends AppCompatActivity {
     String type;
     boolean completed = false;
     public boolean addNewRequest(){
-        //*******************************************
-        // limit of requests like word number limit
-        if(true){
+        if(type.equals("Emergency") || type.equals("Normal")){
             DailyAidRequest newRequest = new DailyAidRequest(requestName,requesterId,accepterId,
                     description,location,type,completed);
             dao.addRequest(newRequest);
@@ -214,6 +210,12 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    /** logOut */
+    public boolean logOut(){
+        userId = 0;
+        return true;
+    }
+
     /** register */
     // default
     private String userName;
@@ -226,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean register(){
         //*******************************************
         // limit of requests like word number limit
-        if(true){
+        if(userName.length() >= 6 && password.length() > 6 && ){
             DailyAidUser usr = new DailyAidUser(userName,password,isVerified,numSuccess,numFail,
                     credit,numPosted);
             dao.addUser(usr);
