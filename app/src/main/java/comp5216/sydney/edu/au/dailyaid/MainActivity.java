@@ -200,6 +200,9 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     } else {
                         // wrong password
+                        Toast toast = Toast.makeText(getApplicationContext(),"Wrong password.",
+                                Toast.LENGTH_SHORT);
+                        toast.show();
                         return false;
                     }
                 }
