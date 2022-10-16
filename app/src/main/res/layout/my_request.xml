@@ -1,0 +1,72 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="comp5216.sydney.edu.au.todolist.EditToDoItemActivity" >
+
+    <EditText
+        android:id="@+id/etEditQuantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/etEditItem"
+        android:layout_alignParentLeft="true"
+        android:ems="12"
+        android:hint="Editing Item Quantity Here"
+        android:inputType="number">
+
+        <requestFocus />
+    </EditText>
+
+
+    <EditText
+        android:id="@+id/etEditItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:ems="12"
+        android:hint="Editing Item Name Here"
+        android:inputType="text"
+        android:maxLength="100">
+
+        <requestFocus />
+    </EditText>
+
+    <DatePicker
+        android:id="@+id/etEditDate"
+        android:layout_below="@+id/etEditQuantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:datePickerMode="spinner"
+        android:calendarViewShown="false"/>
+
+    <TimePicker
+        android:id="@+id/etEditTime"
+        android:layout_below="@+id/etEditDate"
+        android:layout_weight="4"
+        android:timePickerMode="spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/etEditTime"
+        android:layout_below="@+id/etEditTime"
+        android:layout_marginTop="25dp"
+        android:onClick="onSubmit"
+        android:text="Save" />
+
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:layout_below="@+id/etEditTime"
+        android:layout_alignRight="@+id/etEditTime"
+        android:onClick="popUpMsg"
+        android:text="Cancel" />
+
+</RelativeLayout>
+
+

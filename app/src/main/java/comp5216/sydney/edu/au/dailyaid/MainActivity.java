@@ -2,11 +2,12 @@ package comp5216.sydney.edu.au.dailyaid;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.ColumnInfo;
-
-import com.google.android.gms.maps.model.LatLng;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,6 @@ import java.util.List;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidDao;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidDatabase;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidRequest;
-import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidRequestRepository;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidUser;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,8 +26,49 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.home_page);
 
+    }
+
+    /* Setting up menu */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_list, menu);
+        return true;
+    }
+
+    /* dealing with selected items in the menu */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.home_page:
+                Toast.makeText(this, "Home page is selected",
+                        Toast.LENGTH_SHORT).show();
+                return true;
+
+            case R.id.my_request:
+                Toast.makeText(this, "My request is selected",
+                        Toast.LENGTH_SHORT).show();
+                return true;
+
+            case R.id.create_request:
+                Toast.makeText(this, "Create Request is selected",
+                        Toast.LENGTH_SHORT).show();
+                return true;
+
+            case R.id.profile:
+                Toast.makeText(this, "Profile is selected",
+                        Toast.LENGTH_SHORT).show();
+                return true;
+
+            case R.id.logout:
+                Toast.makeText(this, "Logout is selected",
+                        Toast.LENGTH_SHORT).show();
+                return true;
+
+            default: return super.onOptionsItemSelected(item);
+        }
     }
 
     /** Gets distance between 2 users
