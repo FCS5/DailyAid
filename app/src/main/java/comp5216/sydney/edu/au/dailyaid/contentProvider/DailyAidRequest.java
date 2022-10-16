@@ -54,8 +54,9 @@ public class DailyAidRequest {
         private boolean completed;
 
 
-        public DailyAidRequest(int id, @NonNull String requestName, int requesterId, int accepterId, @NonNull String description, @NonNull String location, @NonNull String type, boolean completed) {
-                this.id = id;
+        public DailyAidRequest( @NonNull String requestName, int requesterId, int accepterId,
+                                @NonNull String description, @NonNull String location,
+                                @NonNull String type, boolean completed) {
                 this.requestName = requestName;
                 this.requesterId = requesterId;
                 this.accepterId = accepterId;

@@ -18,7 +18,7 @@ public interface DailyAidDao {
 
     // get by user id
     @Query("select * from dailyAidUsers where userId=:id")
-    List<DailyAidUser> getUser(int id);
+    DailyAidUser getUser(int id);
 
     @Insert
     void addUser(DailyAidUser user);
@@ -35,7 +35,7 @@ public interface DailyAidDao {
 
     // get by request id
     @Query("select * from dailyAidRequest where requestId=:id")
-    List<DailyAidRequest> getRequest(int id);
+    DailyAidRequest getRequest(int id);
 
     // get by request type
     @Query("select * from dailyAidRequest where type=:type and completed is 'false'")

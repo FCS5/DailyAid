@@ -41,8 +41,8 @@ public class DailyAidUser {
     private int numPosted;
 
 
-    public DailyAidUser(int id, @NonNull String userName, @NonNull String hashedPassword, boolean isVerified, int numSuccess, int numFail, int credit, int numPosted) {
-        this.id = id;
+    public DailyAidUser( @NonNull String userName, @NonNull String hashedPassword,
+                         boolean isVerified, int numSuccess, int numFail, int credit, int numPosted) {
         this.userName = userName;
         this.hashedPassword = hashedPassword;
         this.isVerified = isVerified;
