@@ -63,25 +63,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
-            case R.id.home_page:
-                Toast.makeText(this, "Home page is selected",
-                        Toast.LENGTH_SHORT).show();
-                return true;
-
-            case R.id.my_request:
-                Toast.makeText(this, "My request is selected",
-                        Toast.LENGTH_SHORT).show();
-                return true;
-
-            case R.id.create_request:
-                Toast.makeText(this, "Create Request is selected",
-                        Toast.LENGTH_SHORT).show();
-                return true;
-
-            case R.id.profile:
-                Toast.makeText(this, "Profile is selected",
-                        Toast.LENGTH_SHORT).show();
-                return true;
 
             case R.id.logout:
                 Toast.makeText(this, "Logout is selected",

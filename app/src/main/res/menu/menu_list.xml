@@ -2,21 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/home_page"
-        android:title="Home Page"
-        app:showAsAction="never"/>
-
-    <item android:id="@+id/my_request"
-        android:title="My Request"
-        app:showAsAction="never"/>
-
-    <item android:id="@+id/create_request"
-        android:title="Create Request"
-        app:showAsAction="never"/>
-
-    <item android:id="@+id/profile"
-        android:title="Profile"
-        app:showAsAction="never"/>
 
     <item android:id="@+id/logout"
         android:title="Logout"
