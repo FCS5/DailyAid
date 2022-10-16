@@ -1,4 +1,4 @@
-package comp5216.sydney.edu.au.dailyaid.ui.dashboard;
+package comp5216.sydney.edu.au.dailyaid.ui.myrequest;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,22 +10,22 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import comp5216.sydney.edu.au.dailyaid.databinding.FragmentDashboardBinding;
+import comp5216.sydney.edu.au.dailyaid.databinding.FragmentMyrequestBinding;
 
-public class DashboardFragment extends Fragment {
+public class MyRequestFragment extends Fragment {
 
-    private FragmentDashboardBinding binding;
+    private FragmentMyrequestBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        DashboardViewModel dashboardViewModel =
-                new ViewModelProvider(this).get(DashboardViewModel.class);
+        MyRequestViewModel myRequestViewModel =
+                new ViewModelProvider(this).get(MyRequestViewModel.class);
 
-        binding = FragmentDashboardBinding.inflate(inflater, container, false);
+        binding = FragmentMyrequestBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textDashboard;
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final TextView textView = binding.textMyrequest;
+        myRequestViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

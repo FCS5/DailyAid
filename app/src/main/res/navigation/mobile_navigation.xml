@@ -12,20 +12,20 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="comp5216.sydney.edu.au.dailyaid.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_myrequest"
+        android:name="comp5216.sydney.edu.au.dailyaid.ui.myrequest.MyRequestFragment"
+        android:label="@string/title_myrequest"
+        tools:layout="@layout/fragment_myrequest" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="comp5216.sydney.edu.au.dailyaid.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_add"
+        android:name="comp5216.sydney.edu.au.dailyaid.ui.add.AddFragment"
+        android:label="@string/title_add"
+        tools:layout="@layout/fragment_add" />
 
     <fragment
-        android:id="@+id/navigation_idk"
-        android:name="comp5216.sydney.edu.au.dailyaid.ui.idk.IdkFragment"
-        android:label="@string/title_idk"
-        tools:layout="@layout/fragment_idk" />
+        android:id="@+id/navigation_profile"
+        android:name="comp5216.sydney.edu.au.dailyaid.ui.profile.profileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

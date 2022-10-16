@@ -1,16 +1,16 @@
-package comp5216.sydney.edu.au.dailyaid.ui.idk;
+package comp5216.sydney.edu.au.dailyaid.ui.add;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class IdkViewModel extends ViewModel {
+public class AddViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
 
-    public IdkViewModel() {
+    public AddViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is idk fragment");
+        mText.setValue("This is add fragment");
     }
 
     public LiveData<String> getText() {

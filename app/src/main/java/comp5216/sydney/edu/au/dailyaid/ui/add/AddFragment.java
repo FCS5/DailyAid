@@ -1,4 +1,4 @@
-package comp5216.sydney.edu.au.dailyaid.ui.idk;
+package comp5216.sydney.edu.au.dailyaid.ui.add;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,22 +10,22 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import comp5216.sydney.edu.au.dailyaid.databinding.FragmentIdkBinding;
+import comp5216.sydney.edu.au.dailyaid.databinding.FragmentAddBinding;
 
-public class IdkFragment extends Fragment {
+public class AddFragment extends Fragment {
 
-    private FragmentIdkBinding binding;
+    private FragmentAddBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        IdkViewModel idkViewModel =
-                new ViewModelProvider(this).get(IdkViewModel.class);
+        AddViewModel addViewModel =
+                new ViewModelProvider(this).get(AddViewModel.class);
 
-        binding = FragmentIdkBinding.inflate(inflater, container, false);
+        binding = FragmentAddBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textIdk;
-        idkViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final TextView textView = binding.textAdd;
+        addViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

@@ -8,19 +8,20 @@
         <entry key="..\:/GitHub/GitHub/DailyAid/app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.1805" />
         <entry key="..\:/GitHub/GitHub/DailyAid/app/src/main/res/layout/activity_homepage.xml" value="0.25" />
         <entry key="..\:/GitHub/GitHub/DailyAid/app/src/main/res/layout/activity_main.xml" value="0.5536458333333333" />
+        <entry key="..\:/GitHub/GitHub/DailyAid/app/src/main/res/layout/fragment_add.xml" value="0.3663949275362319" />
         <entry key="..\:/GitHub/GitHub/DailyAid/app/src/main/res/layout/fragment_dashboard.xml" value="0.5536458333333333" />
         <entry key="..\:/GitHub/GitHub/DailyAid/app/src/main/res/layout/fragment_home.xml" value="0.5536458333333333" />
         <entry key="..\:/GitHub/GitHub/DailyAid/app/src/main/res/layout/fragment_idk.xml" value="0.4534188034188034" />
+        <entry key="..\:/GitHub/GitHub/DailyAid/app/src/main/res/layout/fragment_myrequest.xml" value="0.3663949275362319" />
         <entry key="..\:/GitHub/GitHub/DailyAid/app/src/main/res/layout/fragment_notifications.xml" value="0.5536458333333333" />
+        <entry key="..\:/GitHub/GitHub/DailyAid/app/src/main/res/layout/fragment_profile.xml" value="0.3663949275362319" />
+        <entry key="..\:/GitHub/GitHub/DailyAid/app/src/main/res/layout/fragment_request.xml" value="0.3663949275362319" />
         <entry key="..\:/GitHub/GitHub/DailyAid/app/src/main/res/layout/home_page.xml" value="0.5536458333333333" />
         <entry key="..\:/GitHub/GitHub/DailyAid/app/src/main/res/layout/idk1.xml" value="0.416213768115942" />
         <entry key="..\:/GitHub/GitHub/DailyAid/app/src/main/res/layout/my_request.xml" value="0.5536458333333333" />
         <entry key="..\:/GitHub/GitHub/DailyAid/app/src/main/res/layout/profile.xml" value="0.5536458333333333" />
-<<<<<<< HEAD
         <entry key="..\:/GitHub/GitHub/DailyAid/app/src/main/res/menu/bottom_nav_menu.xml" value="0.3907407407407407" />
-=======
-        <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.182518115942029" />
->>>>>>> aba33ff7d38f5a1fb887e513f312022f5a3666b3
+        <entry key="..\:/GitHub/GitHub/DailyAid/app/src/main/res/menu/menu_list.xml" value="0.5536458333333333" />
       </map>
     </option>
   </component>
