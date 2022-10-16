@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -207,12 +208,18 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // New db with no users
         }
+        Toast toast = Toast.makeText(getApplicationContext(),"No such user.",
+                Toast.LENGTH_SHORT);
+        toast.show();
         return false;
     }
 
     /** logOut */
     public boolean logOut(){
         userId = 0;
+        Toast toast = Toast.makeText(getApplicationContext(),"You have logged out.",
+                Toast.LENGTH_SHORT);
+        toast.show();
         return true;
     }
 
@@ -226,14 +233,33 @@ public class MainActivity extends AppCompatActivity {
     private int credit = 100;
     private int numPosted = 0;
     public boolean register(){
-        //*******************************************
-        // limit of requests like word number limit
-        if(userName.length() >= 6 && password.length() > 6 && ){
+        // verify password
+        boolean upperFlag = false;
+        boolean lowerFlag = false;
+        boolean numberFlag = false;
+        for( int i = 0 ; i < password.length() ; i++){
+            char cc = password.charAt(i);
+            if (Character.isUpperCase(cc)){
+                upperFlag = true;
+            }else if (Character.isLowerCase(cc)){
+                lowerFlag = true;
+            }else if (Character.isDigit(cc)){
+                numberFlag = true;
+            }
+        }
+        // Layout give hints************************************************
+        // username should contain at least 6 characters
+        // password must contain at least a lower case, an upper case and a number and the length
+        // should longer than 6
+        if(userName.length() >= 6 && password.length() > 6 && upperFlag && lowerFlag && numberFlag){
             DailyAidUser usr = new DailyAidUser(userName,password,isVerified,numSuccess,numFail,
                     credit,numPosted);
             dao.addUser(usr);
             return true;
         }else{
+            Toast toast = Toast.makeText(getApplicationContext(),"invalid format",
+                    Toast.LENGTH_SHORT);
+            toast.show();
             return false;
         }
     }
@@ -262,7 +288,10 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             // have no authority to operate others' request
-            //**************************************************
+            Toast toast = Toast.makeText(getApplicationContext(),"You don't have the right to " +
+                    "modify requests " +
+                    "created by others", Toast.LENGTH_LONG);
+            toast.show();
         }
 
     }
