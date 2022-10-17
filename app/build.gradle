@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -49,4 +50,20 @@ dependencies {
     implementation 'androidx.room:room-runtime:2.4.3'
     annotationProcessor 'androidx.room:room-compiler:2.4.3'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
+
+    // Firebase
+    implementation platform('com.google.firebase:firebase-bom:31.0.0')
+    implementation 'com.google.firebase:firebase-analytics'
+
+    // Authentication
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.android.gms:play-services-auth:20.3.0'
+
+    //Firestore
+    implementation 'com.google.firebase:firebase-firestore:24.2.2'
+
+    //Realtime db
+    implementation platform('com.google.firebase:firebase-bom:30.4.1')
+    implementation 'com.google.firebase:firebase-database'
+
 }
