@@ -1,15 +1,19 @@
 plugins {
     id 'com.android.application'
+
+    // Add the Google services Gradle plugin
+    id 'com.google.gms.google-services'
+
 }
 
 android {
     namespace 'comp5216.sydney.edu.au.dailyaid'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "comp5216.sydney.edu.au.dailyaid"
         minSdk 27
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -32,11 +36,18 @@ android {
 }
 
 dependencies {
+    implementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.benchmark:benchmark-junit4:1.1.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.0'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+
+
+    // tab
+
 
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'androidx.navigation:navigation-fragment:2.3.5'
@@ -44,6 +55,9 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+
+
 
     // Room database
     implementation 'androidx.room:room-runtime:2.4.3'

@@ -12,7 +12,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import comp5216.sydney.edu.au.dailyaid.databinding.ActivityHomepageBinding;
 
-public class Homepage extends AppCompatActivity {
+public class NavigationMenu extends AppCompatActivity {
 
     private ActivityHomepageBinding binding;
 
