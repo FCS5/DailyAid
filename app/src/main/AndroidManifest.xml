@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:debuggable="false"
+    tools:ignore="HardcodedDebugMode"
+    tools:replace="android:debuggable"
     xmlns:tools="http://schemas.android.com/tools">
+    <!--Map permission-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <application
+
+
+
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -13,7 +23,7 @@
         android:theme="@style/Theme.DailyAid"
         tools:targetApi="31">
         <activity
-            android:name=".Homepage"
+            android:name=".NavigationMenu"
             android:exported="false"
             android:label="@string/title_activity_homepage" />
         <activity
@@ -29,6 +39,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
     </application>
 
 </manifest>
