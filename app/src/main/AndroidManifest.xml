@@ -10,9 +10,6 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <application
-
-
-
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -23,11 +20,11 @@
         android:theme="@style/Theme.DailyAid"
         tools:targetApi="31">
 <!--        <activity-->
-<!--            android:name=".NavigationMenu"-->
+<!--            android:name=".Homepage"-->
 <!--            android:exported="false"-->
 <!--            android:label="@string/title_activity_homepage" />-->
         <activity
-            android:name=".MainActivity"
+            android:name=".Navigator"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

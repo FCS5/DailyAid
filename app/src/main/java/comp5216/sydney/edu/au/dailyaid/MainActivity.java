@@ -64,12 +64,11 @@ import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidDao;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidDatabase;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidRequest;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidUser;
-import comp5216.sydney.edu.au.dailyaid.databinding.ActivityHomepageBinding;
+import comp5216.sydney.edu.au.dailyaid.databinding.ActivityNavigatorBinding;
 
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "0";
-    private ActivityHomepageBinding binding;
     DailyAidDao dao;
     DailyAidDatabase db;
     int userId;
@@ -87,12 +86,6 @@ public class MainActivity extends AppCompatActivity {
                 .setAvailableProviders(providers)
                 .build();
         signInLauncher.launch(signInIntent);
-
-
-
-
-
-
     }
     private void initFirestore() {
         mFirestore = FirebaseFirestore.getInstance();
@@ -125,20 +118,17 @@ public class MainActivity extends AppCompatActivity {
             String displayname = user.getDisplayName();
             Log.d(TAG, "DocumentSnapshot added with ID: " );
 
-            //        setContentView(R.layout.activity_homepage);
-            binding = ActivityHomepageBinding.inflate(getLayoutInflater());
-            setContentView(binding.getRoot());
+            // start navigation
 
-            BottomNavigationView navView = findViewById(R.id.nav_view);
-            // Passing each menu ID as a set of Ids because each
-            // menu should be considered as top level destinations.
-            AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.navigation_home, R.id.navigation_myrequest, R.id.navigation_add,
-                    R.id.navigation_profile)
-                    .build();
-            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_homepage);
-            NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-            NavigationUI.setupWithNavController(binding.navView, navController);
+
+
+
+
+
+
+
+
+
 
             // Initialize Firestore and the main RecyclerView
             initFirestore();
