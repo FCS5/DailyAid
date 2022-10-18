@@ -30,7 +30,8 @@ public interface DailyAidDao {
     void deleteUserById(int id);
 
     // REQUEST
-    @Query("select * from dailyAidRequest where completed is 'false'")
+    // where complete == false, SQL HOW ??!!
+    @Query("select * from dailyAidRequest")
     LiveData<List<DailyAidRequest>> getAllRequests();
 
     // get by request id

@@ -8,20 +8,22 @@ import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 import static androidx.room.ForeignKey.CASCADE;
 
-@Entity(tableName="dailyAidRequest",
-        foreignKeys= {
-                @ForeignKey(
-                        entity = DailyAidUser.class,
-                        parentColumns = "userId",
-                        childColumns = "requesterId",
-                        onDelete = CASCADE
-                ),
-                @ForeignKey(
-                        entity = DailyAidUser.class,
-                        parentColumns = "userId",
-                        childColumns = "accepterId",
-                        onDelete = CASCADE
-                )})
+@Entity(tableName="dailyAidRequest"
+//        ,
+//        foreignKeys= {
+//                @ForeignKey(
+//                        entity = DailyAidUser.class,
+//                        parentColumns = "userId",
+//                        childColumns = "requesterId",
+//                        onDelete = CASCADE
+//                ),
+//                @ForeignKey(
+//                        entity = DailyAidUser.class,
+//                        parentColumns = "userId",
+//                        childColumns = "accepterId",
+//                        onDelete = CASCADE
+//                )}
+)
 public class DailyAidRequest {
         @PrimaryKey(autoGenerate = true)
         @ColumnInfo(name="requestId")
@@ -49,7 +51,6 @@ public class DailyAidRequest {
         @ColumnInfo(name="type")
         private String type;
 
-        @NonNull
         @ColumnInfo(name="completed")
         private boolean completed;
 

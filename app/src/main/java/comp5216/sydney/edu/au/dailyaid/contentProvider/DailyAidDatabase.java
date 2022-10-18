@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-@Database(entities = {DailyAidUser.class, DailyAidRequest.class}, version = 1,exportSchema=false)
+@Database(entities = {DailyAidUser.class, DailyAidRequest.class}, version = 2,exportSchema=false)
 public abstract class DailyAidDatabase extends RoomDatabase {
     public static final String DAILYAID_DATABASE_NAME = "DailyAid_database";
 

@@ -4,12 +4,12 @@ import android.app.Application;
 import androidx.lifecycle.LiveData;
 import java.util.List;
 
-public class DailyAidRequestRepository {
+public class DailyAidRepository {
     private DailyAidDao instanceDailyAidDao;
     private LiveData<List<DailyAidUser>> instanceAllUsers;
     private LiveData<List<DailyAidRequest>> instanceAllRequests;
 
-    DailyAidRequestRepository(Application application) {
+    DailyAidRepository(Application application) {
         DailyAidDatabase db = DailyAidDatabase.getDatabase(application);
         instanceDailyAidDao = db.dailyAidDao();
         instanceAllUsers = instanceDailyAidDao.getAllUsers();
@@ -19,7 +19,7 @@ public class DailyAidRequestRepository {
         return instanceAllUsers;
     }
 
-    void insert(DailyAidUser user) {
+    void insertNewUser(DailyAidUser user) {
         DailyAidDatabase.databaseWriteExecutor.execute(() -> instanceDailyAidDao.addUser(user));
     }
 
@@ -31,7 +31,7 @@ public class DailyAidRequestRepository {
         return instanceAllRequests;
     }
 
-    void insert(DailyAidRequest request) {
+    void insertNewRequest(DailyAidRequest request) {
         DailyAidDatabase.databaseWriteExecutor.execute(() -> instanceDailyAidDao.addRequest(request));
     }
 

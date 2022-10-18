@@ -148,20 +148,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    /* Setting up menu */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_list, menu);
-        return true;
-    }
 
     /* dealing with selected items in the menu */
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-
-            case R.id.logout:
+//    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//        switch (item.getItemId()){
+//
+//            case R.id.logout:
                 // add data in firebase
 //                DAUser user1 = new DAUser();
 //                mFirestore.collection("users")
@@ -234,25 +227,25 @@ public class MainActivity extends AppCompatActivity {
 //                            }
 //                        });
 
-
-                AuthUI.getInstance()
-                        .signOut(this)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            public void onComplete(@NonNull Task<Void> task) {
-                                // ...
-                            }
-                        });
-                Toast.makeText(this, "Log out successful", Toast.LENGTH_SHORT).show();
-                Intent signInIntent = AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .build();
-                signInLauncher.launch(signInIntent);
-                return true;
-
-            default: return super.onOptionsItemSelected(item);
-        }
-    }
+//
+//                AuthUI.getInstance()
+//                        .signOut(this)
+//                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                            public void onComplete(@NonNull Task<Void> task) {
+//                                // ...
+//                            }
+//                        });
+//                Toast.makeText(this, "Log out successful", Toast.LENGTH_SHORT).show();
+//                Intent signInIntent = AuthUI.getInstance()
+//                        .createSignInIntentBuilder()
+//                        .setAvailableProviders(providers)
+//                        .build();
+//                signInLauncher.launch(signInIntent);
+//                return true;
+//
+//            default: return super.onOptionsItemSelected(item);
+//        }
+//    }
 
     /** Gets distance between 2 users
      * location1 is the user's location

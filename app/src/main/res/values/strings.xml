@@ -8,4 +8,6 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="home_emergency">home emergency frag</string>
     <string name="home_other">home other frag</string>
+    <string name="FBtn_add">create new request</string>
+    <string name="request_detail">Request detail</string>
 </resources>
