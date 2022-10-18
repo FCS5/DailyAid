@@ -5,6 +5,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -76,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
     private Query mQuery;
     List<String> documentId = new ArrayList<String>();
     List<DAUser> dauser = new ArrayList<DAUser>();
+    ViewModel mViewModel;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,9 +88,18 @@ public class MainActivity extends AppCompatActivity {
         Intent signInIntent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
+                .setIsSmartLockEnabled(false)
                 .build();
         signInLauncher.launch(signInIntent);
+
+
+
+// Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
     }
+
+
+
     private void initFirestore() {
         mFirestore = FirebaseFirestore.getInstance();
 
@@ -118,9 +131,9 @@ public class MainActivity extends AppCompatActivity {
             String displayname = user.getDisplayName();
             Log.d(TAG, "DocumentSnapshot added with ID: " );
 
-            // start navigation
-
-
+        // start navigation
+            Intent intent = new Intent(this,Navigator.class);
+            startActivity(intent);
 
 
 
@@ -148,13 +161,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    /* Setting up menu */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_list, menu);
-        return true;
-    }
 
     /* dealing with selected items in the menu */
     @Override
