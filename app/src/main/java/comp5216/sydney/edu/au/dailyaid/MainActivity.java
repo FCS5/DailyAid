@@ -1,12 +1,15 @@
 package comp5216.sydney.edu.au.dailyaid;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -14,22 +17,60 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.identity.BeginSignInRequest;
+import com.google.android.gms.auth.api.identity.BeginSignInResult;
+import com.google.android.gms.auth.api.identity.Identity;
+import com.google.android.gms.auth.api.identity.SignInClient;
+import com.google.android.gms.auth.api.identity.SignInCredential;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.ActionCodeSettings;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+
+import org.w3c.dom.Document;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import comp5216.sydney.edu.au.dailyaid.contentProvider.DAUser;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidDao;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidDatabase;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidRequest;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidUser;
 import comp5216.sydney.edu.au.dailyaid.databinding.ActivityHomepageBinding;
 
+
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "0";
     private ActivityHomepageBinding binding;
     DailyAidDao dao;
     DailyAidDatabase db;
     int userId;
+
+    private FirebaseFirestore mFirestore;
+    private Query mQuery;
+    List<String> documentId = new ArrayList<String>();
+    List<DAUser> dauser = new ArrayList<DAUser>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +90,21 @@ public class MainActivity extends AppCompatActivity {
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
+        // Enable Firestore logging
+//        FirebaseFirestore.setLoggingEnabled(true);
+
+        // Initialize Firestore and the main RecyclerView
+        initFirestore();
+
+
+
     }
+    private void initFirestore() {
+        mFirestore = FirebaseFirestore.getInstance();
+
+    }
+
+
 
     /* Setting up menu */
     @Override
@@ -65,7 +120,80 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()){
 
             case R.id.logout:
-                Toast.makeText(this, "Logout is selected",
+                // add data in firebase
+//                DAUser user1 = new DAUser();
+//                mFirestore.collection("users")
+//                        .add(user1)
+//                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+//                            @Override
+//                            public void onSuccess(DocumentReference documentReference) {
+//                                Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+//                            }
+//                        })
+//                        .addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                Log.w(TAG, "Error adding document", e);
+//                            }
+//                        });
+
+                // get data by id == 1
+//                mFirestore.collection("users")
+//                        .whereEqualTo("id", 1)
+//                        .get()
+//                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                                if(task.isSuccessful()){
+//                                    for (QueryDocumentSnapshot document : task.getResult()){
+//                                        Log.d(TAG, document.getId()+"=>" + document.getData());
+//                                        documentId.add(document.getId());
+//                                        Log.d(TAG, Integer.toString(documentId.size()));
+//                                    }
+//                                    Log.d(TAG, Integer.toString(documentId.size()));
+//                                    for(String docu : documentId){
+//                                        // Transfer to class format
+//                                        DocumentReference docRef =
+//                                                mFirestore.collection("users").document(docu);
+//                                        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                                            @Override
+//                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                                                Log.d(TAG, "Success!!!!!!!");
+//                                                dauser.add(documentSnapshot.toObject(DAUser.class));
+//                                                Log.d(TAG, Integer.toString(dauser.size()));
+//                                            }
+//                                        });
+//                                    }
+//                                    // why size == 0 **************************************
+//                                    Log.d(TAG, Integer.toString(dauser.size()));
+//                                } else {
+//                                    Log.d(TAG, "Error getting document: ", task.getException());
+//                                }
+//                            }
+//                        });
+
+
+
+
+
+                // get all idea from db
+//                mFirestore.collection("users")
+//                        .get()
+//                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                                if (task.isSuccessful()) {
+//                                    for (QueryDocumentSnapshot document : task.getResult()) {
+//                                        Log.d(TAG, document.getId() + " => " + document.getData());
+//                                    }
+//                                } else {
+//                                    Log.d(TAG, "Error getting documents: ", task.getException());
+//                                }
+//                            }
+//                        });
+
+
+                Toast.makeText(this, Integer.toString(documentId.size()),
                         Toast.LENGTH_SHORT).show();
                 return true;
 
@@ -99,8 +227,8 @@ public class MainActivity extends AppCompatActivity {
         List<DailyAidRequest> returnRequests = new ArrayList<DailyAidRequest>();
         if (sourceRequests != null){
             for (DailyAidRequest dar :sourceRequests){
-                // <1km
-                if (getDistance(dar.getLocation() , userLocation) <= 1 && getDistance(dar.getLocation() , userLocation) > 0){
+                // <5km
+                if (getDistance(dar.getLocation() , userLocation) <= 5 && getDistance(dar.getLocation() , userLocation) > 0){
                     returnRequests.add(dar);
                 }
             }
