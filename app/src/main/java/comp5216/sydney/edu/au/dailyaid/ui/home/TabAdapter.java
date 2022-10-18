@@ -13,10 +13,9 @@ public class TabAdapter extends FragmentPagerAdapter
     HomeFragment context;
     int totalTabs;
 
-    public TabAdapter(@NonNull FragmentManager fm, HomeFragment context, int totalTabs) {
+    public TabAdapter(@NonNull FragmentManager fm, HomeFragment context) {
         super(fm);
         this.context = context;
-        this.totalTabs = totalTabs;
         Log.i("notify", String.valueOf(totalTabs));
     }
 
@@ -25,19 +24,16 @@ public class TabAdapter extends FragmentPagerAdapter
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        Log.i("position", String.valueOf(position));
 
         switch (position){
-            case 0:{
-                Log.i("position", String.valueOf(position));
+            case 0:
                 return HomeEmergencyFragment.newInstance();
-            }
-            case 1:{
-                Log.i("position", String.valueOf(position));
+
+            case 1:
                 return HomeOtherFragment.newInstance();
-            }
+
             default:
-                return null;
+                return HomeEmergencyFragment.newInstance();
         }
 
     }
@@ -45,6 +41,6 @@ public class TabAdapter extends FragmentPagerAdapter
 
     @Override
     public int getCount() {
-        return 0;
+        return 2;
     }
 }

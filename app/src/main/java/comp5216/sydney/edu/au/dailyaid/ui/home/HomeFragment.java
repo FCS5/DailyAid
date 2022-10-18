@@ -63,13 +63,12 @@ public class HomeFragment extends Fragment {
         tabLayout.addTab(tabLayout.newTab().setText("Others"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        final TabAdapter adapter = new TabAdapter( getChildFragmentManager(), this,tabLayout.getTabCount());
+        final TabAdapter adapter = new TabAdapter( getChildFragmentManager(), this);
         viewPager.setAdapter(adapter);
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener(){
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab){
                 viewPager.setCurrentItem(tab.getPosition());
