@@ -16,35 +16,37 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
+//
+//import com.google.android.gms.auth.api.identity.BeginSignInRequest;
+//import com.google.android.gms.auth.api.identity.BeginSignInResult;
+//import com.google.android.gms.auth.api.identity.Identity;
+//import com.google.android.gms.auth.api.identity.SignInClient;
+//import com.google.android.gms.auth.api.identity.SignInCredential;
+//import com.google.android.gms.common.api.ApiException;
+//import com.google.android.gms.tasks.OnCompleteListener;
+//import com.google.android.gms.tasks.OnFailureListener;
+//import com.google.android.gms.tasks.OnSuccessListener;
+//import com.google.android.gms.tasks.Task;
+//import com.google.android.material.bottomnavigation.BottomNavigationView;
+//import com.google.firebase.auth.ActionCodeSettings;
+//import com.google.firebase.auth.AuthCredential;
+//import com.google.firebase.auth.AuthResult;
+//import com.google.firebase.auth.FirebaseAuth;
+//import com.google.firebase.auth.FirebaseUser;
+//import com.google.firebase.auth.GoogleAuthProvider;
+//import com.google.firebase.database.DatabaseReference;
+//import com.google.firebase.database.FirebaseDatabase;
+//import com.google.firebase.firestore.CollectionReference;
+//import com.google.firebase.firestore.DocumentReference;
+//import com.google.firebase.firestore.DocumentSnapshot;
+//import com.google.firebase.firestore.FirebaseFirestore;
+//import com.google.firebase.firestore.FirebaseFirestoreException;
+//import com.google.firebase.firestore.Query;
+//import com.google.firebase.firestore.QueryDocumentSnapshot;
+//import com.google.firebase.firestore.QuerySnapshot;
 
-import com.google.android.gms.auth.api.identity.BeginSignInRequest;
-import com.google.android.gms.auth.api.identity.BeginSignInResult;
-import com.google.android.gms.auth.api.identity.Identity;
-import com.google.android.gms.auth.api.identity.SignInClient;
-import com.google.android.gms.auth.api.identity.SignInCredential;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.ActionCodeSettings;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
 
 import org.w3c.dom.Document;
 
@@ -57,18 +59,18 @@ import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidDao;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidDatabase;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidRequest;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidUser;
-import comp5216.sydney.edu.au.dailyaid.databinding.ActivityHomepageBinding;
+import comp5216.sydney.edu.au.dailyaid.databinding.ActivityNavigatorBinding;
 
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "0";
-    private ActivityHomepageBinding binding;
+    private ActivityNavigatorBinding binding;
     DailyAidDao dao;
     DailyAidDatabase db;
     int userId;
-
-    private FirebaseFirestore mFirestore;
-    private Query mQuery;
+//
+//    private FirebaseFirestore mFirestore;
+//    private Query mQuery;
     List<String> documentId = new ArrayList<String>();
     List<DAUser> dauser = new ArrayList<DAUser>();
 
@@ -76,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_homepage);
-        binding = ActivityHomepageBinding.inflate(getLayoutInflater());
+        binding = ActivityNavigatorBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -86,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 R.id.navigation_home, R.id.navigation_myrequest, R.id.navigation_add,
                 R.id.navigation_profile)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_homepage);
+        NavController navController = Navigation.findNavController(this, R.id.homepage);
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
@@ -94,15 +96,12 @@ public class MainActivity extends AppCompatActivity {
 //        FirebaseFirestore.setLoggingEnabled(true);
 
         // Initialize Firestore and the main RecyclerView
-        initFirestore();
+//        initFirestore();
 
 
 
     }
-    private void initFirestore() {
-        mFirestore = FirebaseFirestore.getInstance();
 
-    }
 
 
 
