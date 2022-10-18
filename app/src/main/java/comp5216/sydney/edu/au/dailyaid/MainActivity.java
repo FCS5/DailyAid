@@ -138,39 +138,39 @@ public class MainActivity extends AppCompatActivity {
 //                        });
 
                 // get data by id == 1
-                mFirestore.collection("users")
-                        .whereEqualTo("id", 1)
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if(task.isSuccessful()){
-                                    for (QueryDocumentSnapshot document : task.getResult()){
-                                        Log.d(TAG, document.getId()+"=>" + document.getData());
-                                        documentId.add(document.getId());
-                                        Log.d(TAG, Integer.toString(documentId.size()));
-                                    }
-                                    Log.d(TAG, Integer.toString(documentId.size()));
-                                    for(String docu : documentId){
-                                        // Transfer to class format
-                                        DocumentReference docRef =
-                                                mFirestore.collection("users").document(docu);
-                                        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                Log.d(TAG, "Success!!!!!!!");
-                                                dauser.add(documentSnapshot.toObject(DAUser.class));
-                                                Log.d(TAG, Integer.toString(dauser.size()));
-                                            }
-                                        });
-                                    }
-                                    // why size == 0 **************************************
-                                    Log.d(TAG, Integer.toString(dauser.size()));
-                                } else {
-                                    Log.d(TAG, "Error getting document: ", task.getException());
-                                }
-                            }
-                        });
+//                mFirestore.collection("users")
+//                        .whereEqualTo("id", 1)
+//                        .get()
+//                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                                if(task.isSuccessful()){
+//                                    for (QueryDocumentSnapshot document : task.getResult()){
+//                                        Log.d(TAG, document.getId()+"=>" + document.getData());
+//                                        documentId.add(document.getId());
+//                                        Log.d(TAG, Integer.toString(documentId.size()));
+//                                    }
+//                                    Log.d(TAG, Integer.toString(documentId.size()));
+//                                    for(String docu : documentId){
+//                                        // Transfer to class format
+//                                        DocumentReference docRef =
+//                                                mFirestore.collection("users").document(docu);
+//                                        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                                            @Override
+//                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                                                Log.d(TAG, "Success!!!!!!!");
+//                                                dauser.add(documentSnapshot.toObject(DAUser.class));
+//                                                Log.d(TAG, Integer.toString(dauser.size()));
+//                                            }
+//                                        });
+//                                    }
+//                                    // why size == 0 **************************************
+//                                    Log.d(TAG, Integer.toString(dauser.size()));
+//                                } else {
+//                                    Log.d(TAG, "Error getting document: ", task.getException());
+//                                }
+//                            }
+//                        });
 
 
 

@@ -34,27 +34,22 @@ buildscript {
 plugins {
     id 'com.android.application' version '7.2.1' apply false
     id 'com.android.library' version '7.2.1' apply false
-<<<<<<< HEAD
-=======
+
     id 'androidx.benchmark' version '1.1.0-beta04' apply false
->>>>>>> c85f678d3022f6a65c7277e5d555a1c64d230708
+
 }
 
 allprojects {
     repositories {
         // Make sure that you have the following two repositories
-<<<<<<< HEAD
+
 //        google()  // Google's Maven repository
 //
 //        mavenCentral()  // Maven Central repository
 
     }
 }
-=======
-        google()  // Google's Maven repository
 
-        mavenCentral()  // Maven Central repository
 
-    }
-}
->>>>>>> c85f678d3022f6a65c7277e5d555a1c64d230708
+
+
