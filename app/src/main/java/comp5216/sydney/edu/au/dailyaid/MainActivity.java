@@ -1,5 +1,7 @@
 package comp5216.sydney.edu.au.dailyaid;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +19,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
+import com.firebase.ui.auth.IdpResponse;
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
 import com.google.android.gms.auth.api.identity.BeginSignInResult;
 import com.google.android.gms.auth.api.identity.Identity;
@@ -49,6 +55,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -66,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
     DailyAidDao dao;
     DailyAidDatabase db;
     int userId;
-
     private FirebaseFirestore mFirestore;
     private Query mQuery;
     List<String> documentId = new ArrayList<String>();
@@ -75,26 +81,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_homepage);
-        binding = ActivityHomepageBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_myrequest, R.id.navigation_add,
-                R.id.navigation_profile)
+        // Create and launch sign-in intent
+        Intent signInIntent = AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setAvailableProviders(providers)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_homepage);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(binding.navView, navController);
+        signInLauncher.launch(signInIntent);
 
-        // Enable Firestore logging
-//        FirebaseFirestore.setLoggingEnabled(true);
 
-        // Initialize Firestore and the main RecyclerView
-        initFirestore();
+
 
 
 
@@ -104,6 +99,63 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // See: https://developer.android.com/training/basics/intents/result
+    private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
+            new FirebaseAuthUIActivityResultContract(),
+            new ActivityResultCallback<FirebaseAuthUIAuthenticationResult>() {
+                @Override
+                public void onActivityResult(FirebaseAuthUIAuthenticationResult result) {
+                    onSignInResult(result);
+                }
+            }
+    );
+
+    // Choose authentication providers
+    List<AuthUI.IdpConfig> providers = Arrays.asList(
+            new AuthUI.IdpConfig.EmailBuilder().build(),
+            new AuthUI.IdpConfig.GoogleBuilder().build());
+
+    private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
+        IdpResponse response = result.getIdpResponse();
+        if (result.getResultCode() == RESULT_OK) {
+            // Successfully signed in
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            String userId = user.getUid();
+            String email = user.getEmail();
+            String displayname = user.getDisplayName();
+            Log.d(TAG, "DocumentSnapshot added with ID: " );
+
+            //        setContentView(R.layout.activity_homepage);
+            binding = ActivityHomepageBinding.inflate(getLayoutInflater());
+            setContentView(binding.getRoot());
+
+            BottomNavigationView navView = findViewById(R.id.nav_view);
+            // Passing each menu ID as a set of Ids because each
+            // menu should be considered as top level destinations.
+            AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                    R.id.navigation_home, R.id.navigation_myrequest, R.id.navigation_add,
+                    R.id.navigation_profile)
+                    .build();
+            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_homepage);
+            NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+            NavigationUI.setupWithNavController(binding.navView, navController);
+
+            // Initialize Firestore and the main RecyclerView
+            initFirestore();
+            // ...
+        } else {
+            // Sign in failed. If response is null the user canceled the
+            // sign-in flow using the back button. Otherwise check
+            // response.getError().getErrorCode() and handle the error.
+            // ...
+            Intent signInIntent = AuthUI.getInstance()
+                    .createSignInIntentBuilder()
+                    .setAvailableProviders(providers)
+                    .build();
+            signInLauncher.launch(signInIntent);
+            Log.d(TAG, "Try again. " );
+        }
+    }
 
 
     /* Setting up menu */
@@ -193,8 +245,19 @@ public class MainActivity extends AppCompatActivity {
 //                        });
 
 
-                Toast.makeText(this, Integer.toString(documentId.size()),
-                        Toast.LENGTH_SHORT).show();
+                AuthUI.getInstance()
+                        .signOut(this)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            public void onComplete(@NonNull Task<Void> task) {
+                                // ...
+                            }
+                        });
+                Toast.makeText(this, "Log out successful", Toast.LENGTH_SHORT).show();
+                Intent signInIntent = AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .build();
+                signInLauncher.launch(signInIntent);
                 return true;
 
             default: return super.onOptionsItemSelected(item);
