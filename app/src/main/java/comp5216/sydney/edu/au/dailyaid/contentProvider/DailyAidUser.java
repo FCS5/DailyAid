@@ -52,6 +52,9 @@ public class DailyAidUser {
         this.numPosted = numPosted;
     }
 
+
+
+
     public int getId() {
         return id;
     }

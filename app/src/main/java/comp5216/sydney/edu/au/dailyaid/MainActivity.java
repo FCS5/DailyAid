@@ -94,8 +94,10 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-// Initialize Firebase Auth
+        // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+        // Initialize Firestore and the main RecyclerView
+        initFirestore();
     }
 
 
@@ -118,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Choose authentication providers
     List<AuthUI.IdpConfig> providers = Arrays.asList(
-            new AuthUI.IdpConfig.EmailBuilder().build(),
+//            new AuthUI.IdpConfig.EmailBuilder().build(),
             new AuthUI.IdpConfig.GoogleBuilder().build());
 
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
@@ -127,11 +129,35 @@ public class MainActivity extends AppCompatActivity {
             // Successfully signed in
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             String userId = user.getUid();
-            String email = user.getEmail();
-            String displayname = user.getDisplayName();
-            Log.d(TAG, "DocumentSnapshot added with ID: " );
+//            String email = user.getEmail();
+//            String displayname = user.getDisplayName();
+//            Log.d(TAG, "DocumentSnapshot added with ID: " );
 
-        // start navigation
+            // check whether the user is in our firebase
+            DocumentReference docRef = mFirestore.collection("users").document(userId);
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            // do nothing
+                            Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        } else {
+                            Log.d(TAG, "No such document");
+                            // create new user
+                            addNewUser();
+                        }
+                    } else {
+                        Log.d(TAG, "get failed with ", task.getException());
+                    }
+                }
+            });
+
+
+
+
+            // start navigation
             Intent intent = new Intent(this,Navigator.class);
             startActivity(intent);
 
@@ -143,8 +169,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-            // Initialize Firestore and the main RecyclerView
-            initFirestore();
+
             // ...
         } else {
             // Sign in failed. If response is null the user canceled the
@@ -414,44 +439,33 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    /** register */
-    // default
-    private String userName;
-    private String password;
-    private boolean isVerified = false;
-    private int numSuccess = 0;
-    private int numFail = 0;
-    private int credit = 100;
-    private int numPosted = 0;
-    public boolean register(){
-        // verify password
-        boolean upperFlag = false;
-        boolean lowerFlag = false;
-        boolean numberFlag = false;
-        for( int i = 0 ; i < password.length() ; i++){
-            char cc = password.charAt(i);
-            if (Character.isUpperCase(cc)){
-                upperFlag = true;
-            }else if (Character.isLowerCase(cc)){
-                lowerFlag = true;
-            }else if (Character.isDigit(cc)){
-                numberFlag = true;
-            }
-        }
-        // Layout give hints************************************************
-        // username should contain at least 6 characters
-        // password must contain at least a lower case, an upper case and a number and the length
-        // should longer than 6
-        if(userName.length() >= 6 && password.length() > 6 && upperFlag && lowerFlag && numberFlag){
-            DailyAidUser usr = new DailyAidUser(userName,password,isVerified,numSuccess,numFail,
-                    credit,numPosted);
-            dao.addUser(usr);
-            return true;
-        }else{
-            Toast toast = Toast.makeText(getApplicationContext(),"invalid format",
-                    Toast.LENGTH_SHORT);
-            toast.show();
-            return false;
+    /** Add a new user */
+    public void addNewUser(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // id and name from google
+            String uid = user.getUid();
+            String name = user.getDisplayName();
+            // default
+            int numSuccess = 0;
+            int numFailed = 0;
+            int credit = 100;
+            int numPosted = 0;
+            DAUser newUser = new DAUser(uid,name,numSuccess,numFailed,credit,numPosted);
+            mFirestore.collection("users").document(uid)
+                    .set(newUser)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d(TAG, "DocumentSnapshot successfully written!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w(TAG, "Error writing document", e);
+                        }
+                    });
         }
     }
 

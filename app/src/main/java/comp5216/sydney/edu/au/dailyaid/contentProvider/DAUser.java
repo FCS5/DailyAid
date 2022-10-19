@@ -2,33 +2,36 @@ package comp5216.sydney.edu.au.dailyaid.contentProvider;
 
 public class DAUser {
 
-    private int id = 1;
+    private String id;
     private String userName;
-    private String hashedPassword;
-    private boolean isVerified;
+//    private String hashedPassword;
+//    private boolean isVerified;
     private int numSuccess;
     private int numFail;
     private int credit;
     private int numPosted;
+    private String email;
 
 
     public DAUser(){};
-    public DAUser( int id, String userName, String hashedPassword,
-                         boolean isVerified, int numSuccess, int numFail, int credit, int numPosted) {
+    public DAUser( String id, String userName, int numSuccess, int numFail, int credit,
+                   int numPosted) {
+        this.id = id;
         this.userName = userName;
-        this.hashedPassword = hashedPassword;
-        this.isVerified = isVerified;
+//        this.hashedPassword = hashedPassword;
+//        this.isVerified = isVerified;
         this.numSuccess = numSuccess;
         this.numFail = numFail;
         this.credit = credit;
         this.numPosted = numPosted;
+
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -40,21 +43,21 @@ public class DAUser {
         this.userName = userName;
     }
 
-    public String getHashedPassword() {
-        return hashedPassword;
-    }
-
-    public void setHashedPassword(String hashedPassword) {
-        this.hashedPassword = hashedPassword;
-    }
-
-    public boolean isVerified() {
-        return isVerified;
-    }
-
-    public void setVerified(boolean verified) {
-        isVerified = verified;
-    }
+//    public String getHashedPassword() {
+//        return hashedPassword;
+//    }
+//
+//    public void setHashedPassword(String hashedPassword) {
+//        this.hashedPassword = hashedPassword;
+//    }
+//
+//    public boolean isVerified() {
+//        return isVerified;
+//    }
+//
+//    public void setVerified(boolean verified) {
+//        isVerified = verified;
+//    }
 
     public int getNumSuccess() {
         return numSuccess;
