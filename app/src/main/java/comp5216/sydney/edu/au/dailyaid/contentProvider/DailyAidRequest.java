@@ -34,10 +34,10 @@ public class DailyAidRequest {
         private String requestName;
 
         @ColumnInfo(name="requesterId")
-        private int requesterId;
+        private String requesterId;
 
         @ColumnInfo(name="accepterId")
-        private int accepterId;
+        private String accepterId;
 
         @NonNull
         @ColumnInfo(name="description")
@@ -55,8 +55,8 @@ public class DailyAidRequest {
         private boolean completed;
 
 
-        public DailyAidRequest( @NonNull String requestName, int requesterId,
-                                int accepterId,
+        public DailyAidRequest( @NonNull String requestName, String requesterId,
+                                String accepterId,
                                 @NonNull String description, @NonNull String location,
                                 @NonNull String type, boolean completed) {
                 this.requestName = requestName;
@@ -85,19 +85,19 @@ public class DailyAidRequest {
                 this.requestName = requestName;
         }
 
-        public int getRequesterId() {
+        public String getRequesterId() {
                 return requesterId;
         }
 
-        public void setRequesterId(int requesterId) {
+        public void setRequesterId(String requesterId) {
                 this.requesterId = requesterId;
         }
 
-        public int getAccepterId() {
+        public String getAccepterId() {
                 return accepterId;
         }
 
-        public void setAccepterId(int accepterId) {
+        public void setAccepterId(String accepterId) {
                 this.accepterId = accepterId;
         }
 

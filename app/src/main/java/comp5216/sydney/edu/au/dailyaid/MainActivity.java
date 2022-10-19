@@ -61,6 +61,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import comp5216.sydney.edu.au.dailyaid.contentProvider.DARequest;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DAUser;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidDao;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidDatabase;
@@ -327,53 +328,13 @@ public class MainActivity extends AppCompatActivity {
         return request.getDescription();
     }
 
-    /** Update the status of request after accepted */
-    public void updateRequestStatusAfterAccepted(int requestId, int accepterId){
-        DailyAidRequest request = dao.getRequest(requestId);
-        request.setAccepterId(accepterId);
-        dao.deleteRequestById(requestId);
-        dao.addRequest(request);
-    }
 
-    /** Update the status of request after cancelled */
-    public void updateRequestStatusAfterCancelled(int requestId, int accepterId){
-        DailyAidRequest request = dao.getRequest(requestId);
-        request.setAccepterId(0);
-        dao.deleteRequestById(requestId);
-        dao.addRequest(request);
-    }
 
-    /** get posted requests by userId */
-    public List<DailyAidRequest> getPostedRequests(int userId){
-        List<DailyAidRequest> sourceRequests = (List<DailyAidRequest>) dao.getAllRequests();
-        List<DailyAidRequest> returnRequests = new ArrayList<DailyAidRequest>();
-        if(sourceRequests != null){
-            for (DailyAidRequest dar :sourceRequests){
-                if(userId == dar.getRequesterId()){
-                    returnRequests.add(dar);
-                }
-            }
-            return returnRequests;
-        } else {
-            return null;
-        }
-    }
 
-    /** get accepted requests by userId */
-    public List<DailyAidRequest> getAcceptedRequests(int userId){
-        List<DailyAidRequest> sourceRequests = (List<DailyAidRequest>) dao.getAllRequests();
-        List<DailyAidRequest> returnRequests = new ArrayList<DailyAidRequest>();
-        if(sourceRequests != null){
-            for (DailyAidRequest dar :sourceRequests){
-                if(userId == dar.getAccepterId()){
-                    returnRequests.add(dar);
-                }
-            }
-            return returnRequests;
-        } else {
-            return null;
-        }
-    }
+
+
+
+
 
     /** Get the user's location
      ************************************************/
@@ -381,77 +342,28 @@ public class MainActivity extends AppCompatActivity {
         return "111,222";
     }
 
-    /** Create new request */
-    // default
-    String requestName;
-    int requesterId = userId;
-    int accepterId=0;
-    String description;
-    String location;
-    String type;
-    boolean completed = false;
-    public boolean addNewRequest(){
-        if(type.equals("Emergency") || type.equals("Normal")){
-            DailyAidRequest newRequest = new DailyAidRequest(requestName,requesterId,accepterId,
-                    description,location,type,completed);
-            dao.addRequest(newRequest);
-            return true;
-        }else{
-           return false;
-        }
-    }
+    /** Create new request and upload to firebase */
 
-    /** signIn */
-    public boolean signIn(String username , String password){
-        List<DailyAidUser> sourceUsrList = (List<DailyAidUser>) dao.getAllUsers();
-        if(sourceUsrList != null){
-            for(DailyAidUser usr :sourceUsrList){
-                if(usr.getUserName() == username){
-                    if(usr.getHashedPassword() == password){
-                        // verified
-                        userId = usr.getId();
-                        return true;
-                    } else {
-                        // wrong password
-                        Toast toast = Toast.makeText(getApplicationContext(),"Wrong password.",
-                                Toast.LENGTH_SHORT);
-                        toast.show();
-                        return false;
-                    }
-                }
-            }
-            // no such usr in db
-        } else {
-            // New db with no users
-        }
-        Toast toast = Toast.makeText(getApplicationContext(),"No such user.",
-                Toast.LENGTH_SHORT);
-        toast.show();
-        return false;
-    }
 
-    /** logOut */
-    public boolean logOut(){
-        userId = 0;
-        Toast toast = Toast.makeText(getApplicationContext(),"You have logged out.",
-                Toast.LENGTH_SHORT);
-        toast.show();
-        return true;
-    }
+
+
+
+
 
     /** Add a new user */
     public void addNewUser(){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            // id and name from google
+            // id, name and email from google
             String uid = user.getUid();
             String name = user.getDisplayName();
+            String email = user.getEmail();
             // default
             int numSuccess = 0;
             int numFailed = 0;
             int credit = 100;
             int numPosted = 0;
-            DAUser newUser = new DAUser(uid,name,numSuccess,numFailed,credit,numPosted);
+            DAUser newUser = new DAUser(uid,name,numSuccess,numFailed,credit,numPosted,email);
             mFirestore.collection("users").document(uid)
                     .set(newUser)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -480,32 +392,6 @@ public class MainActivity extends AppCompatActivity {
         usr.getNumSuccess();
     }
 
-    /** cancel request as a poster */
-    public void cancelByPoster(int requestId){
-        DailyAidUser usr = dao.getUser(userId);
-        DailyAidRequest request = dao.getRequest(requestId);
-        if(request.getRequesterId() == userId){
-            if (request.getAccepterId() != 0){
-                // inform the accepter
-                //*********************************************
-            } else {
-                dao.deleteRequestById(requestId);
-            }
-        } else {
-            // have no authority to operate others' request
-            Toast toast = Toast.makeText(getApplicationContext(),"You don't have the right to " +
-                    "modify requests " +
-                    "created by others", Toast.LENGTH_LONG);
-            toast.show();
-        }
 
-    }
 
-    /** cancel request as a accepter */
-    public void cancelByAccepter(int requestId){
-        DailyAidUser usr = dao.getUser(userId);
-        // credit of accepter -10
-        usr.setCredit(usr.getCredit()-10);
-        updateRequestStatusAfterCancelled(requestId,userId);
-    }
 }

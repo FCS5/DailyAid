@@ -33,6 +33,7 @@ public class DailyAidRepository {
 
     void insertNewRequest(DailyAidRequest request) {
         DailyAidDatabase.databaseWriteExecutor.execute(() -> instanceDailyAidDao.addRequest(request));
+
     }
 
     void deleteRequestById(int id) {
