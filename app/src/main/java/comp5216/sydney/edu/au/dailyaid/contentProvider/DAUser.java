@@ -15,7 +15,7 @@ public class DAUser {
 
     public DAUser(){};
     public DAUser( String id, String userName, int numSuccess, int numFail, int credit,
-                   int numPosted) {
+                   int numPosted, String email) {
         this.id = id;
         this.userName = userName;
 //        this.hashedPassword = hashedPassword;
@@ -24,6 +24,7 @@ public class DAUser {
         this.numFail = numFail;
         this.credit = credit;
         this.numPosted = numPosted;
+        this.email = email;
 
     }
 
@@ -89,5 +90,13 @@ public class DAUser {
 
     public void setNumPosted(int numPosted) {
         this.numPosted = numPosted;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

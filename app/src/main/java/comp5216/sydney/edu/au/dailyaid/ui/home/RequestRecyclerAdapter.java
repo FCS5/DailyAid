@@ -1,10 +1,12 @@
 package comp5216.sydney.edu.au.dailyaid.ui.home;
 
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +18,7 @@ import java.util.List;
 
 import comp5216.sydney.edu.au.dailyaid.R;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidRequest;
+import comp5216.sydney.edu.au.dailyaid.ui.detail.RequestDetailFragment;
 
 public class RequestRecyclerAdapter extends RecyclerView.Adapter<RequestRecyclerAdapter.ViewHolder> {
 
@@ -43,7 +46,9 @@ public class RequestRecyclerAdapter extends RecyclerView.Adapter<RequestRecycler
         final int fPosition = position;
         holder.itemView.setOnClickListener((v -> {
             // click to go to task detail page
-
+            Intent intent = new Intent(v.getContext(), RequestDetailFragment.class);
+            intent.putExtra("requestID",requestsList.get(position).getId());
+            v.getContext().startActivity(intent);
         }));
 
     }
