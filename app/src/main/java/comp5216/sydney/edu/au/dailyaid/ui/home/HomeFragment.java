@@ -47,12 +47,9 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         // fragment inflate
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-//        final TextView textView = binding.textHome;
-//        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
 
 
         tabLayout = (TabLayout) root.findViewById(R.id.tabLayout);
@@ -104,6 +101,7 @@ public class HomeFragment extends Fragment {
                         wayLatitude = location.getLatitude();
                         wayLongitude = location.getLongitude();
                         Log.d("CurrentLocation",String.format(Locale.US, "%s -- %s", wayLatitude, wayLongitude));
+                        mFusedLocationClient.removeLocationUpdates(locationCallback);
                     }
                 }
             }

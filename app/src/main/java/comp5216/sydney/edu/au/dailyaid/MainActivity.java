@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Choose authentication providers
     List<AuthUI.IdpConfig> providers = Arrays.asList(
-//            new AuthUI.IdpConfig.EmailBuilder().build(),
+            new AuthUI.IdpConfig.EmailBuilder().build(),
             new AuthUI.IdpConfig.GoogleBuilder().build());
 
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
@@ -328,52 +328,52 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /** Update the status of request after accepted */
-    public void updateRequestStatusAfterAccepted(int requestId, int accepterId){
-        DailyAidRequest request = dao.getRequest(requestId);
-        request.setAccepterId(accepterId);
-        dao.deleteRequestById(requestId);
-        dao.addRequest(request);
-    }
+//    public void updateRequestStatusAfterAccepted(int requestId, int accepterId){
+//        DailyAidRequest request = dao.getRequest(requestId);
+//        request.setAccepterId(accepterId);
+//        dao.deleteRequestById(requestId);
+//        dao.addRequest(request);
+//    }
 
     /** Update the status of request after cancelled */
-    public void updateRequestStatusAfterCancelled(int requestId, int accepterId){
-        DailyAidRequest request = dao.getRequest(requestId);
-        request.setAccepterId(0);
-        dao.deleteRequestById(requestId);
-        dao.addRequest(request);
-    }
+//    public void updateRequestStatusAfterCancelled(int requestId, int accepterId){
+//        DailyAidRequest request = dao.getRequest(requestId);
+//        request.setAccepterId(0);
+//        dao.deleteRequestById(requestId);
+//        dao.addRequest(request);
+//    }
 
     /** get posted requests by userId */
-    public List<DailyAidRequest> getPostedRequests(int userId){
-        List<DailyAidRequest> sourceRequests = (List<DailyAidRequest>) dao.getAllRequests();
-        List<DailyAidRequest> returnRequests = new ArrayList<DailyAidRequest>();
-        if(sourceRequests != null){
-            for (DailyAidRequest dar :sourceRequests){
-                if(userId == dar.getRequesterId()){
-                    returnRequests.add(dar);
-                }
-            }
-            return returnRequests;
-        } else {
-            return null;
-        }
-    }
+//    public List<DailyAidRequest> getPostedRequests(int userId){
+//        List<DailyAidRequest> sourceRequests = (List<DailyAidRequest>) dao.getAllRequests();
+//        List<DailyAidRequest> returnRequests = new ArrayList<DailyAidRequest>();
+//        if(sourceRequests != null){
+//            for (DailyAidRequest dar :sourceRequests){
+//                if(userId == dar.getRequesterId()){
+//                    returnRequests.add(dar);
+//                }
+//            }
+//            return returnRequests;
+//        } else {
+//            return null;
+//        }
+//    }
 
     /** get accepted requests by userId */
-    public List<DailyAidRequest> getAcceptedRequests(int userId){
-        List<DailyAidRequest> sourceRequests = (List<DailyAidRequest>) dao.getAllRequests();
-        List<DailyAidRequest> returnRequests = new ArrayList<DailyAidRequest>();
-        if(sourceRequests != null){
-            for (DailyAidRequest dar :sourceRequests){
-                if(userId == dar.getAccepterId()){
-                    returnRequests.add(dar);
-                }
-            }
-            return returnRequests;
-        } else {
-            return null;
-        }
-    }
+//    public List<DailyAidRequest> getAcceptedRequests(int userId){
+//        List<DailyAidRequest> sourceRequests = (List<DailyAidRequest>) dao.getAllRequests();
+//        List<DailyAidRequest> returnRequests = new ArrayList<DailyAidRequest>();
+//        if(sourceRequests != null){
+//            for (DailyAidRequest dar :sourceRequests){
+//                if(userId == dar.getAccepterId()){
+//                    returnRequests.add(dar);
+//                }
+//            }
+//            return returnRequests;
+//        } else {
+//            return null;
+//        }
+//    }
 
     /** Get the user's location
      ************************************************/
@@ -390,16 +390,16 @@ public class MainActivity extends AppCompatActivity {
     String location;
     String type;
     boolean completed = false;
-    public boolean addNewRequest(){
-        if(type.equals("Emergency") || type.equals("Normal")){
-            DailyAidRequest newRequest = new DailyAidRequest(requestName,requesterId,accepterId,
-                    description,location,type,completed);
-            dao.addRequest(newRequest);
-            return true;
-        }else{
-           return false;
-        }
-    }
+//    public boolean addNewRequest(){
+//        if(type.equals("Emergency") || type.equals("Normal")){
+//            DailyAidRequest newRequest = new DailyAidRequest(requestName,requesterId,accepterId,
+//                    description,location,type,completed);
+//            dao.addRequest(newRequest);
+//            return true;
+//        }else{
+//           return false;
+//        }
+//    }
 
     /** signIn */
     public boolean signIn(String username , String password){
@@ -481,31 +481,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /** cancel request as a poster */
-    public void cancelByPoster(int requestId){
-        DailyAidUser usr = dao.getUser(userId);
-        DailyAidRequest request = dao.getRequest(requestId);
-        if(request.getRequesterId() == userId){
-            if (request.getAccepterId() != 0){
-                // inform the accepter
-                //*********************************************
-            } else {
-                dao.deleteRequestById(requestId);
-            }
-        } else {
-            // have no authority to operate others' request
-            Toast toast = Toast.makeText(getApplicationContext(),"You don't have the right to " +
-                    "modify requests " +
-                    "created by others", Toast.LENGTH_LONG);
-            toast.show();
-        }
-
-    }
+//    public void cancelByPoster(int requestId){
+//        DailyAidUser usr = dao.getUser(userId);
+//        DailyAidRequest request = dao.getRequest(requestId);
+//        if(request.getRequesterId() == userId){
+//            if (request.getAccepterId() != 0){
+//                // inform the accepter
+//                //*********************************************
+//            } else {
+//                dao.deleteRequestById(requestId);
+//            }
+//        } else {
+//            // have no authority to operate others' request
+//            Toast toast = Toast.makeText(getApplicationContext(),"You don't have the right to " +
+//                    "modify requests " +
+//                    "created by others", Toast.LENGTH_LONG);
+//            toast.show();
+//        }
+//
+//    }
 
     /** cancel request as a accepter */
-    public void cancelByAccepter(int requestId){
-        DailyAidUser usr = dao.getUser(userId);
-        // credit of accepter -10
-        usr.setCredit(usr.getCredit()-10);
-        updateRequestStatusAfterCancelled(requestId,userId);
-    }
+//    public void cancelByAccepter(int requestId){
+//        DailyAidUser usr = dao.getUser(userId);
+//        // credit of accepter -10
+//        usr.setCredit(usr.getCredit()-10);
+//        updateRequestStatusAfterCancelled(requestId,userId);
+//    }
 }

@@ -76,10 +76,10 @@ public class HomeEmergencyFragment extends Fragment {
         instanceDailyAidViewModel = new ViewModelProvider(this).get(DailyAidViewModel.class);
 
 
-        DailyAidRequest request = new DailyAidRequest(
-                "name",1, 1,"good job","here","test",false);
+//        DailyAidRequest request = new DailyAidRequest(
+//                "name",1, 1,"good job","here","test",false);
 
-        instanceDailyAidViewModel.createNewRequest(request);
+//        instanceDailyAidViewModel.createNewRequest(request);
 
 
         // implement viewmodel to access room database

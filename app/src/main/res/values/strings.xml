@@ -10,4 +10,8 @@
     <string name="home_other">home other frag</string>
     <string name="FBtn_add">create new request</string>
     <string name="request_detail">Request detail</string>
+    <string-array name="planets_array">
+        <item>Emergency</item>
+        <item>Other</item>
+    </string-array>
 </resources>
