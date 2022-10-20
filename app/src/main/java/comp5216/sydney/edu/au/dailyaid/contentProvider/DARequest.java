@@ -6,15 +6,17 @@ public class DARequest {
 
     private int id;
     private String requestName;
-    private int requesterId;
-    private int accepterId;
+    private String requesterId;
+    private String accepterId;
     private String description;
     private String location;
     private String type;
     private boolean completed;
 
-    public DARequest( String requestName, int requesterId,
-                            int accepterId,
+    public DARequest(){}
+
+    public DARequest( String requestName, String requesterId,
+                            String accepterId,
                             String description, String location,
                             String type, boolean completed) {
         this.requestName = requestName;
@@ -43,19 +45,19 @@ public class DARequest {
         this.requestName = requestName;
     }
 
-    public int getRequesterId() {
+    public String getRequesterId() {
         return requesterId;
     }
 
-    public void setRequesterId(int requesterId) {
+    public void setRequesterId(String requesterId) {
         this.requesterId = requesterId;
     }
 
-    public int getAccepterId() {
+    public String getAccepterId() {
         return accepterId;
     }
 
-    public void setAccepterId(int accepterId) {
+    public void setAccepterId(String accepterId) {
         this.accepterId = accepterId;
     }
 

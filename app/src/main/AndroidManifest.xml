@@ -37,6 +37,7 @@
                 android:value="" />
         </activity>
         <activity android:name=".Navigator"/>
+        <activity android:name=".ui.detail.RequestDetailFragment"/>
 
     </application>
 

@@ -5,23 +5,36 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.List;
 
 import comp5216.sydney.edu.au.dailyaid.R;
+import comp5216.sydney.edu.au.dailyaid.contentProvider.DARequest;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidRequest;
 import comp5216.sydney.edu.au.dailyaid.ui.detail.RequestDetailFragment;
 
-public class RequestRecyclerAdapter
-    extends RecyclerView.Adapter<RequestRecyclerAdapter.ViewHolder> {
 
-  private List<DailyAidRequest> requestsList;
 
-  public RequestRecyclerAdapter() {}
-  ;
+public class RequestRecyclerAdapter extends RecyclerView.Adapter<RequestRecyclerAdapter.ViewHolder> {
+
+    private List<DailyAidRequest> requestsList;
+    private String TAG = "RequestRecycleAdapter";
+
+    public  RequestRecyclerAdapter(){};
+
+
 
   public void setRequestsList(List<DailyAidRequest> newData) {
     requestsList = newData;
@@ -37,18 +50,44 @@ public class RequestRecyclerAdapter
     return new ViewHolder(v);
   }
 
-  @Override
-  public void onBindViewHolder(@NonNull RequestRecyclerAdapter.ViewHolder holder, int position) {
-    holder.title.setText(requestsList.get(position).getRequestName());
-    holder.description.setText(requestsList.get(position).getDescription());
-    holder.location.setText(requestsList.get(position).getLocation());
-    final int fPosition = position;
-    holder.itemView.setOnClickListener(
-        (v -> {
-          // click to go to task detail page
-          Intent intent = new Intent(v.getContext(), RequestDetailFragment.class);
-          intent.putExtra("requestID", requestsList.get(position).getId());
-          v.getContext().startActivity(intent);
+    @Override
+    public void onBindViewHolder(@NonNull RequestRecyclerAdapter.ViewHolder holder, int position) {
+        holder.title.setText(requestsList.get(position).getRequestName());
+        holder.description.setText(requestsList.get(position).getDescription());
+        holder.location.setText(requestsList.get(position).getLocation());
+        int id = requestsList.get(position).getId();
+        String requesterId = requestsList.get(position).getRequesterId();
+        final int fPosition = position;
+        holder.itemView.setOnClickListener((v -> {
+            // click to go to task detail page
+            // first check whether there is a accepter
+
+//            Toast.makeText(v,"The request has been accepted.",
+//                    Toast.LENGTH_LONG);
+
+
+            FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
+            DocumentReference docRef =
+                    mFirestore.collection("requests").document(Integer.toString(id));
+            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    DARequest request = documentSnapshot.toObject(DARequest.class);
+                    if(request.getAccepterId().length() != 0){
+                        // Toast
+                        Snackbar.make(v,"The request has been accepted.",
+                                Snackbar.LENGTH_LONG).setAction("action",null).show();
+                    } else{
+                        // start activity
+                        Intent intent = new Intent(v.getContext(), RequestDetailFragment.class);
+                        intent.putExtra("requestID",id);
+                        v.getContext().startActivity(intent);
+                    }
+                }
+            });
+
+
+
         }));
   }
 
