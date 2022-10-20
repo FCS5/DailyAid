@@ -36,6 +36,11 @@ public class DailyAidRepository {
 
     }
 
+    long insertRequest(DailyAidRequest request){
+//        DailyAidDatabase.databaseWriteExecutor.execute(() -> instanceDailyAidDao.insertRequest(request));
+        return instanceDailyAidDao.insertRequest(request);
+    }
+
     void deleteRequestById(int id) {
         DailyAidDatabase.databaseWriteExecutor.execute(() -> instanceDailyAidDao.deleteRequestById(id));
     }

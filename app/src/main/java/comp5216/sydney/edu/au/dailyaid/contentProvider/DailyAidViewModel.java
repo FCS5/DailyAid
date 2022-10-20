@@ -27,8 +27,13 @@ public class DailyAidViewModel extends AndroidViewModel {
     public void createNewRequest(DailyAidRequest request) {
         instanceRepository.insertNewRequest(request);
     }
+
+    public long createRequest(DailyAidRequest request){
+        return instanceRepository.insertRequest(request);
+    }
     public void createNewUser(DailyAidUser user) {
         instanceRepository.insertNewUser(user);
     }
+
 
 }

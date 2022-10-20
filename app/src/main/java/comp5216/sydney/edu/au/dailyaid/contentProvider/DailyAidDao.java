@@ -2,6 +2,7 @@ package comp5216.sydney.edu.au.dailyaid.contentProvider;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Entity;
 import androidx.room.Insert;
 import androidx.room.Query;
 import java.util.List;
@@ -47,6 +48,11 @@ public interface DailyAidDao {
 
     @Insert
     void addRequest(DailyAidRequest request);
+
+    @Insert
+    long insertRequest(DailyAidRequest request);
+
+
 
     @Query("delete from dailyAidRequest where requestId=:id")
     void deleteRequestById(int id);
