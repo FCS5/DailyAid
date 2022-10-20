@@ -1,6 +1,10 @@
-package comp5216.sydney.edu.au.dailyaid.ui.home;
+package comp5216.sydney.edu.au.dailyaid.ui.myrequest;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,17 +13,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import comp5216.sydney.edu.au.dailyaid.R;
-import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidRequest;
-import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidUser;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidViewModel;
+import comp5216.sydney.edu.au.dailyaid.ui.home.RequestRecyclerAdapter;
 
-public class HomeEmergencyFragment extends Fragment {
+public class RequestPostFragment extends Fragment {
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     RequestRecyclerAdapter adapter;
@@ -27,12 +25,12 @@ public class HomeEmergencyFragment extends Fragment {
 
 
 
-    public HomeEmergencyFragment() {
+    public RequestPostFragment() {
         // Required empty public constructor
     }
 
-    public static HomeEmergencyFragment newInstance() {
-        return new HomeEmergencyFragment();
+    public static RequestPostFragment newInstance() {
+        return new RequestPostFragment();
     }
 
 
@@ -48,33 +46,22 @@ public class HomeEmergencyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home_emergency, container, false);
+        return inflater.inflate(R.layout.fragment_request_post, container, false);
 
     }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        recyclerView = view.findViewById(R.id.request_Emergency_Recycle_List);
+        recyclerView = view.findViewById(R.id.request_Post_Recycle_List);
         layoutManager =new LinearLayoutManager(view.getContext());
         recyclerView.setLayoutManager(layoutManager);
 
         adapter = new RequestRecyclerAdapter();
         recyclerView.setAdapter(adapter);
 
-//        DailyAidUser user = new DailyAidUser(
-//                "userName","adawdqw",true,
-//                0,0,100,0);
-//
-//        instanceDailyAidViewModel.createNewUser(user);
-//
-
+        // initialize the room view model
         instanceDailyAidViewModel = new ViewModelProvider(this).get(DailyAidViewModel.class);
 
-
-//        DailyAidRequest request = new DailyAidRequest(
-//                "name",1, 1,"good job","here","test",false);
-
-//        instanceDailyAidViewModel.createNewRequest(request);
 
 
         // implement viewmodel to access room database
@@ -86,4 +73,6 @@ public class HomeEmergencyFragment extends Fragment {
 
 
     }
+
+
 }

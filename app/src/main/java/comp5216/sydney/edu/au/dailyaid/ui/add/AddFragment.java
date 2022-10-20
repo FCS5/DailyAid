@@ -111,7 +111,7 @@ public class AddFragment extends Fragment implements AdapterView.OnItemSelectedL
                 mFusedLocationClient = LocationServices.getFusedLocationProviderClient(root.getContext());
                 locationRequest = LocationRequest.create();
                 locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                locationRequest.setInterval(1* 10);
+                locationRequest.setInterval(1* 1000);
                 locationCallback = new LocationCallback() {
                     @Override
                     public void onLocationResult(LocationResult locationResult) {
@@ -120,9 +120,14 @@ public class AddFragment extends Fragment implements AdapterView.OnItemSelectedL
                         }
                         for (Location location : locationResult.getLocations()) {
                             if (location != null) {
+
                                 wayLatitude = location.getLatitude();
                                 wayLongitude = location.getLongitude();
-
+                                try {
+                                    Thread.sleep(2*100);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
                                 currentLocation = String.valueOf(location.getLatitude()) + ","+String.valueOf(location.getLongitude());
 
                                 Log.d("CurrentLocation",String.format(Locale.US, "%s -- %s", wayLatitude, wayLongitude));

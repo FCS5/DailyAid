@@ -15,7 +15,7 @@
         android:id="@+id/navigation_myrequest"
         android:name="comp5216.sydney.edu.au.dailyaid.ui.myrequest.MyRequestFragment"
         android:label="@string/title_myrequest"
-        tools:layout="@layout/fragment_myrequest" />
+        tools:layout="@layout/fragment_request" />
 
     <fragment
         android:id="@+id/navigation_add"

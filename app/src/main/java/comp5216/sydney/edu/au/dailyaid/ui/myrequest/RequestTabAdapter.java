@@ -1,22 +1,18 @@
-package comp5216.sydney.edu.au.dailyaid.ui.home;
+package comp5216.sydney.edu.au.dailyaid.ui.myrequest;
 
-import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-public class TabAdapter extends FragmentPagerAdapter
+public class RequestTabAdapter extends FragmentPagerAdapter
 {
-    HomeFragment context;
-    int totalTabs;
+    MyRequestFragment context;
 
-    public TabAdapter(@NonNull FragmentManager fm, HomeFragment context) {
+    public RequestTabAdapter(@NonNull FragmentManager fm, MyRequestFragment context) {
         super(fm);
         this.context = context;
-        Log.i("notify", String.valueOf(totalTabs));
     }
 
 
@@ -27,13 +23,13 @@ public class TabAdapter extends FragmentPagerAdapter
 
         switch (position){
             case 0:
-                return HomeEmergencyFragment.newInstance();
+                return RequestPostFragment.newInstance();
 
             case 1:
-                return HomeOtherFragment.newInstance();
+                return RequestAcceptFragment.newInstance();
 
             default:
-                return HomeEmergencyFragment.newInstance();
+                return RequestPostFragment.newInstance();
         }
 
     }
