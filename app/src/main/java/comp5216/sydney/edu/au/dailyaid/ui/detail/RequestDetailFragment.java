@@ -68,9 +68,11 @@ public class RequestDetailFragment extends AppCompatActivity {
 
         TextView requestName = (TextView) findViewById(R.id.detailRequest);
         TextView detailRequester = (TextView) findViewById(R.id.detailRequester);
-        TextView detailAccepter = binding.detailAccepter;
+        TextView detailAccepter = (TextView) findViewById(R.id.detailAccepter);
         TextView detailType = (TextView) findViewById(R.id.detailType);
         TextView detailDescription = (TextView) findViewById(R.id.detailDescription);
+        Button accept = (Button) findViewById(R.id.accept);
+        Button cancel = (Button) findViewById(R.id.cancel);
 
         int id = getIntent().getExtras().getInt("requestID");
 
@@ -83,6 +85,301 @@ public class RequestDetailFragment extends AppCompatActivity {
                 requestName.setText(request.getRequestName());
                 detailType.setText(request.getType());
                 detailDescription.setText(request.getDescription());
+                detailRequester.setText(request.getRequesterId());
+                detailAccepter.setText(request.getAccepterId());
+                // current user is the requester
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if(detailRequester.getText().toString().equals(user.getUid())){
+                    accept.setText("Complete");
+                    // Exist accepter
+                    if(detailAccepter.length() != 0){
+                        // complete button
+                        accept.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                // update request information (completed -> true)
+                                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        DARequest request = documentSnapshot.toObject(DARequest.class);
+                                        request.setCompleted(true);
+                                        // set the request by id
+                                        mFirestore.collection("requests").document(Integer.toString(id))
+                                                .set(request)
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w(TAG, "Error deleting document", e);
+                                                    }
+                                                });
+                                        // update accepter information (credit+1, success+1)
+                                        mFirestore.collection("users").document(request.getAccepterId())
+                                                .get()
+                                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                    @Override
+                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                        DAUser user =
+                                                                documentSnapshot.toObject(DAUser.class);
+                                                        user.setNumSuccess(user.getNumSuccess()+1);
+                                                        user.setCredit(user.getCredit()+1);
+                                                        // upload accepter
+                                                        mFirestore.collection("users").document(request.getAccepterId())
+                                                                .set(user)
+                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void aVoid) {
+                                                                        Snackbar.make(view,"Success",
+                                                                                Snackbar.LENGTH_LONG).setAction("action",null).show();
+                                                                        finish();
+                                                                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                                                    }
+                                                                })
+                                                                .addOnFailureListener(new OnFailureListener() {
+                                                                    @Override
+                                                                    public void onFailure(@NonNull Exception e) {
+                                                                        Log.w(TAG, "Error deleting document", e);
+                                                                    }
+                                                                });
+                                                    }
+                                                });
+                                    }
+                                });
+                            }
+                        });
+                        // cancel button
+                        cancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                // cancel the request
+                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                // delete request in firebase
+                                docRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                // update poster information (credit-1)
+                                                mFirestore.collection("users")
+                                                        .document(user.getUid())
+                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                            @Override
+                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                DAUser currentUser =
+                                                                        documentSnapshot.toObject(DAUser.class);
+                                                                currentUser.setCredit(currentUser.getCredit()-1);
+                                                                mFirestore.collection("users")
+                                                                        .document(user.getUid())
+                                                                        .set(currentUser)
+                                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                            @Override
+                                                                            public void onSuccess(Void aVoid) {
+                                                                                Log.d(TAG, "DocumentSnapshot successfully written!");
+                                                                            }
+                                                                        })
+                                                                        .addOnFailureListener(new OnFailureListener() {
+                                                                            @Override
+                                                                            public void onFailure(@NonNull Exception e) {
+                                                                                Log.w(TAG, "Error writing document", e);
+                                                                            }
+                                                                        });
+                                                            }
+                                                        });
+                                                Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w(TAG, "Error deleting document", e);
+                                            }
+                                        });
+
+
+                            }
+                        });
+                    }
+                    // No accepter
+                    else{
+                        cancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                // delete the request
+                                docRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        finish();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+                // current user is the accepter
+                if(detailAccepter.getText().toString().equals(user.getUid())){
+                    accept.setText("Complete");
+                    // cancel button
+                    cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            // cancel the request
+                            // update request information (accepter -> "")
+                            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    DARequest request = documentSnapshot.toObject(DARequest.class);
+                                    request.setAccepterId("");
+                                    // upload
+                                    docRef.set(request)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    // update accepter information ( credit-1, fail+1)
+                                                    mFirestore.collection("users")
+                                                            .document(request.getAccepterId())
+                                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                @Override
+                                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                    DAUser currentUser = documentSnapshot.toObject(DAUser.class);
+                                                                    currentUser.setNumFail(currentUser.getNumFail()+1);
+                                                                    currentUser.setCredit(currentUser.getCredit()-1);
+                                                                    mFirestore.collection("users")
+                                                                            .document(request.getAccepterId())
+                                                                            .set(currentUser)
+                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                @Override
+                                                                                public void onSuccess(Void aVoid) {
+                                                                                    Snackbar.make(view,"Success",
+                                                                                            Snackbar.LENGTH_LONG).setAction("action",null).show();
+                                                                                    finish();
+                                                                                    Log.d(TAG, "DocumentSnapshot successfully written!");
+                                                                                }
+                                                                            })
+                                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                                @Override
+                                                                                public void onFailure(@NonNull Exception e) {
+                                                                                    Log.w(TAG, "Error writing document", e);
+                                                                                }
+                                                                            });
+                                                                }
+                                                            });
+                                                    Log.d(TAG, "DocumentSnapshot successfully written!");
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w(TAG, "Error writing document", e);
+                                                }
+                                            });
+                                }
+                            });
+                        }
+                    });
+                    // complete button
+                    accept.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            // update request information (completed -> true)
+                            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    DARequest request = documentSnapshot.toObject(DARequest.class);
+                                    request.setCompleted(true);
+                                    // set the request by id
+                                    mFirestore.collection("requests").document(Integer.toString(id))
+                                            .set(request)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+
+                                                    Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w(TAG, "Error deleting document", e);
+                                                }
+                                            });
+                                    // update accepter information (credit+1, success+1)
+                                    mFirestore.collection("users").document(request.getAccepterId())
+                                            .get()
+                                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                    DAUser user =
+                                                            documentSnapshot.toObject(DAUser.class);
+                                                    user.setNumSuccess(user.getNumSuccess()+1);
+                                                    user.setCredit(user.getCredit()+1);
+                                                    // upload accepter
+                                                    mFirestore.collection("users").document(request.getAccepterId())
+                                                            .set(user)
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    Snackbar.make(view,"Success",
+                                                                            Snackbar.LENGTH_LONG).setAction("action",null).show();
+                                                                    finish();
+                                                                    Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Log.w(TAG, "Error deleting document", e);
+                                                                }
+                                                            });
+                                                }
+                                            });
+                                }
+                            });
+                        }
+                    });
+                }
+                // other user
+                if(!detailAccepter.getText().toString().equals(user.getUid()) && !detailRequester.getText().toString().equals(user.getUid())){
+                    cancel.setVisibility(View.INVISIBLE);
+                    accept.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            // revise the information in firebase, add the accepter
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            if(user != null){
+                                String uid = user.getUid();
+                                // get request from database
+                                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        DARequest request = documentSnapshot.toObject(DARequest.class);
+                                        request.setAccepterId(uid);
+                                        // set the request by id
+                                        mFirestore.collection("requests").document(Integer.toString(id))
+                                                .set(request)
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Snackbar.make(view,"Success",
+                                                                Snackbar.LENGTH_LONG).setAction("action",null).show();
+                                                        finish();
+                                                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w(TAG, "Error deleting document", e);
+                                                    }
+                                                });
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
                 DocumentReference docR =
                         mFirestore.collection("users").document(request.getRequesterId());
                 docR.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -90,55 +387,21 @@ public class RequestDetailFragment extends AppCompatActivity {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         DAUser user = documentSnapshot.toObject(DAUser.class);
                         detailRequester.setText(String.valueOf(user.getUserName()));
+
                     }
                 });
-
+//                DocumentReference docR1 =
+//                        mFirestore.collection("users").document(request.getAccepterId());
+//                docR1.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                            @Override
+//                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                                DAUser user = documentSnapshot.toObject(DAUser.class);
+//                                detailAccepter.setText(String.valueOf(user.getUserName()));
+//                            }
+//                        });
             }
 
         });
-
-
-        Button accept = (Button) findViewById(R.id.accept);
-        accept.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // revise the information in firebase, add the accepter
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if(user != null){
-                    String uid = user.getUid();
-                    // get request from database
-                    docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            DARequest request = documentSnapshot.toObject(DARequest.class);
-                            request.setAccepterId(uid);
-                            // set the request by id
-                            mFirestore.collection("requests").document(Integer.toString(id))
-                                    .set(request)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Snackbar.make(view,"Success",
-                                                    Snackbar.LENGTH_LONG).setAction("action",null).show();
-                                            finish();
-                                            Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "Error deleting document", e);
-                                        }
-                                    });
-
-                        }
-                    });
-                }
-
-            }
-        });
-
-
         ImageButton goBack = (ImageButton) findViewById(R.id.goBack);
         goBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,10 +409,6 @@ public class RequestDetailFragment extends AppCompatActivity {
                 finish();
             }
         });
-
-
-
-
 
 //        final TextView textView = binding.detailName;
 //        profileViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);

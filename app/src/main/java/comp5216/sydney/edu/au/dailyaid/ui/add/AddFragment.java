@@ -33,12 +33,16 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,6 +53,7 @@ import java.util.concurrent.TimeUnit;
 import comp5216.sydney.edu.au.dailyaid.Navigator;
 import comp5216.sydney.edu.au.dailyaid.R;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DARequest;
+import comp5216.sydney.edu.au.dailyaid.contentProvider.DAUser;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidDao;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidDatabase;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidRequest;
@@ -213,6 +218,36 @@ public class AddFragment extends Fragment implements AdapterView.OnItemSelectedL
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
+                                                // add posted to for the user
+                                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                                DocumentReference docRef =
+                                                        mFirestore.collection("users")
+                                                                .document(user.getUid());
+                                                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                    @Override
+                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                        DAUser user =
+                                                                documentSnapshot.toObject(DAUser.class);
+                                                        user.setNumPosted(user.getNumPosted()+1);
+                                                        // update user information
+                                                        mFirestore.collection("users")
+                                                                .document(user.getId())
+                                                                .set(user)
+                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void aVoid) {
+                                                                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                                                                    }
+                                                                })
+                                                                .addOnFailureListener(new OnFailureListener() {
+                                                                    @Override
+                                                                    public void onFailure(@NonNull Exception e) {
+                                                                        Log.w(TAG, "Error writing document", e);
+                                                                    }
+                                                                });
+
+                                                    }
+                                                });
                                                 Log.d(TAG, "DocumentSnapshot successfully written!");
                                             }
                                         })

@@ -13,7 +13,19 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import comp5216.sydney.edu.au.dailyaid.R;
+import comp5216.sydney.edu.au.dailyaid.contentProvider.DARequest;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidViewModel;
 import comp5216.sydney.edu.au.dailyaid.ui.home.HomeEmergencyFragment;
 import comp5216.sydney.edu.au.dailyaid.ui.home.RequestRecyclerAdapter;
@@ -77,11 +89,35 @@ public class RequestAcceptFragment extends Fragment {
 
 
         // implement viewmodel to access room database
-        instanceDailyAidViewModel.getListAllRequests().observe(getViewLifecycleOwner(),newData->{
-            Log.i("newData", String.valueOf(newData));
-            adapter.setRequestsList(newData);
-            adapter.notifyDataSetChanged();
-        });
+        // First get user id
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = "default";
+        if (user != null) {
+            uid = user.getUid();
+        }
+        FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
+        mFirestore.collection("requests")
+                .whereEqualTo("accepterId", uid)
+                .whereEqualTo("completed",false)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<DARequest> acceptRequests = new ArrayList<DARequest>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                DARequest request = document.toObject(DARequest.class);
+                                acceptRequests.add(request);
+                                adapter.setRequestsList(acceptRequests);
+                                adapter.notifyDataSetChanged();
+                                Log.d("EmergencyList",
+                                        document.getId() + " => " + document.getData());
+                            }
+                        } else {
+                            Log.d("EmergencyList", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
 
 
     }

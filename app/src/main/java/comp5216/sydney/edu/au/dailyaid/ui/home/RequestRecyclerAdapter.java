@@ -16,6 +16,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,15 +35,18 @@ import comp5216.sydney.edu.au.dailyaid.ui.detail.RequestDetailFragment;
 
 public class RequestRecyclerAdapter extends RecyclerView.Adapter<RequestRecyclerAdapter.ViewHolder> {
 
-    private List<DailyAidRequest> requestsList;
+    private List<DARequest> requestsList;
     private String TAG = "RequestRecycleAdapter";
     private Geocoder geocoder;
     public  RequestRecyclerAdapter(){};
 
 
-  public void setRequestsList(List<DailyAidRequest> newData) {
+
+
+  public void setRequestsList(List<DARequest> newData) {
     requestsList = newData;
   }
+
 
   @NonNull
   @Override
@@ -109,7 +114,10 @@ public class RequestRecyclerAdapter extends RecyclerView.Adapter<RequestRecycler
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     DARequest request = documentSnapshot.toObject(DARequest.class);
-                    if(request.getAccepterId().length() != 0){
+                    String uid;
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    uid = user.getUid();
+                    if(request.getAccepterId().length() != 0 && ! request.getAccepterId().equals(uid)){
                         // Toast
                         Snackbar.make(v,"The request has been accepted.",
                                 Snackbar.LENGTH_LONG).setAction("action",null).show();
