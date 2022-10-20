@@ -66,11 +66,11 @@ public class RequestDetailFragment extends AppCompatActivity {
 
         Toast.makeText(this,"The request has been accepted.", Toast.LENGTH_LONG);
 
-        TextView requestName = binding.detailRequest;
-        TextView detailRequester = binding.detailRequester;
+        TextView requestName = (TextView) findViewById(R.id.detailRequest);
+        TextView detailRequester = (TextView) findViewById(R.id.detailRequester);
         TextView detailAccepter = binding.detailAccepter;
-        TextView detailType = binding.detailType;
-        TextView detailDescription = binding.detailDescription;
+        TextView detailType = (TextView) findViewById(R.id.detailType);
+        TextView detailDescription = (TextView) findViewById(R.id.detailDescription);
 
         int id = getIntent().getExtras().getInt("requestID");
 
@@ -81,14 +81,24 @@ public class RequestDetailFragment extends AppCompatActivity {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 DARequest request = documentSnapshot.toObject(DARequest.class);
                 requestName.setText(request.getRequestName());
-                detailRequester.setText(String.valueOf(request.getRequesterId()));
                 detailType.setText(request.getType());
                 detailDescription.setText(request.getDescription());
+                DocumentReference docR =
+                        mFirestore.collection("users").document(request.getRequesterId());
+                docR.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        DAUser user = documentSnapshot.toObject(DAUser.class);
+                        detailRequester.setText(String.valueOf(user.getUserName()));
+                    }
+                });
+
             }
 
         });
 
-        Button accept = binding.accept;
+
+        Button accept = (Button) findViewById(R.id.accept);
         accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -108,6 +118,9 @@ public class RequestDetailFragment extends AppCompatActivity {
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
+                                            Snackbar.make(view,"Success",
+                                                    Snackbar.LENGTH_LONG).setAction("action",null).show();
+                                            finish();
                                             Log.d(TAG, "DocumentSnapshot successfully deleted!");
                                         }
                                     })
@@ -117,16 +130,22 @@ public class RequestDetailFragment extends AppCompatActivity {
                                             Log.w(TAG, "Error deleting document", e);
                                         }
                                     });
+
                         }
-
                     });
-
-
                 }
 
             }
         });
 
+
+        ImageButton goBack = (ImageButton) findViewById(R.id.goBack);
+        goBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
 
 
@@ -136,10 +155,8 @@ public class RequestDetailFragment extends AppCompatActivity {
 //        profileViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
     }
 
-    public void onBackClick(){
-        finish();
 
-    }
+
 
 
 }
