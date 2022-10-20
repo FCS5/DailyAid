@@ -118,7 +118,7 @@ public class HomeOtherFragment extends Fragment {
                             }
                             List<DARequest> showRequests = new ArrayList<DARequest>();
                             for(DARequest other : OtherRequests){
-                                if(getDistance(devicelocation,other.getLocation())<=5 && getDistance(devicelocation,other.getLocation())){
+                                if(getDistance(devicelocation,other.getLocation())<=5 && getDistance(devicelocation,other.getLocation())>0){
                                     showRequests.add(other);
                                 }
                             }

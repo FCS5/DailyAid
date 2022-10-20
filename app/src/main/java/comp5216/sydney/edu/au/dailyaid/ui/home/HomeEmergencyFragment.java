@@ -115,7 +115,7 @@ public class HomeEmergencyFragment extends Fragment {
                             }
                             List<DARequest> showRequests = new ArrayList<DARequest>();
                             for(DARequest emergency : emergencyRequests){
-                                if(getDistance(devicelocation,emergency.getLocation())<=5 && getDistance(devicelocation,emergency.getLocation())){
+                                if(getDistance(devicelocation,emergency.getLocation())<=5 && getDistance(devicelocation,emergency.getLocation())>0){
                                     showRequests.add(emergency);
                                 }
                             }
