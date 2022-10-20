@@ -1,10 +1,14 @@
 package comp5216.sydney.edu.au.dailyaid.ui.add;
 
+import static com.google.android.gms.location.Granularity.GRANULARITY_PERMISSION_LEVEL;
+import static com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY;
 import static java.sql.Types.NULL;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +27,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.gms.location.CurrentLocationRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -35,6 +40,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -117,79 +124,41 @@ public class AddFragment extends Fragment implements AdapterView.OnItemSelectedL
                 // get current location
                 // location fetch using gps
                 mFusedLocationClient = LocationServices.getFusedLocationProviderClient(root.getContext());
-                locationRequest = LocationRequest.create();
-                locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                locationRequest.setInterval(1* 1000);
-                locationCallback = new LocationCallback() {
-                    @Override
-                    public void onLocationResult(LocationResult locationResult) {
-                        if (locationResult == null) {
-                            return;
-                        }
-                        for (Location location : locationResult.getLocations()) {
-                            if (location != null) {
-
-                                wayLatitude = location.getLatitude();
-                                wayLongitude = location.getLongitude();
-                                try {
-                                    Thread.sleep(2*100);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                                currentLocation = String.valueOf(location.getLatitude()) + ","+String.valueOf(location.getLongitude());
-
-                                Log.d("CurrentLocation",String.format(Locale.US, "%s -- %s", wayLatitude, wayLongitude));
-                                mFusedLocationClient.removeLocationUpdates(locationCallback);
-
-                            }
-                        }
-                        // completed
-                        DailyAidRequest  newRequest = new DailyAidRequest(title,uid,"",description,currentLocation,type,completed);
-                        DARequest newDARequest = new DARequest(title,uid,"",description,currentLocation,type,completed);
-                        //Upload to firebse
-//                                instanceDailyAidViewModel.createNewRequest(newRequest);
-
-                        try {
-                            // Run a task specified by a Runnable Object asynchronously.
-                            CompletableFuture<Void> future = CompletableFuture.runAsync(new Runnable() {
-                                @Override
-                                public void run() {
-                                    //read items from database
-                                    long id = instanceDailyAidViewModel.createRequest(newRequest);
-                                    newDARequest.setId((int)id);
-                                    System.out.println("I'll run in a separate thread than the main thread.");
-                                }
-                            });
-
-                            // Block and wait for the future to complete
-                            future.get();
-                        }
-                        catch(Exception ex) {
-                            Log.e("readItemsFromDatabase", ex.getStackTrace().toString());
-                        }
-
-
-                        FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
-                        // add the request by id
-                        mFirestore.collection("requests").document(Integer.toString(newDARequest.getId()))
-                                .set(newDARequest)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d(TAG, "DocumentSnapshot successfully written!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w(TAG, "Error writing document", e);
-                                    }
-                                });
-
-                        Intent intent = new Intent(root.getContext(), Navigator.class);
-                        startActivity(intent);
-                    }
-                };
+                CurrentLocationRequest.Builder currentLocationRequestBuilder = new CurrentLocationRequest.Builder().
+                        setDurationMillis(10 * 1000).setPriority(PRIORITY_HIGH_ACCURACY).setMaxUpdateAgeMillis(5 * 1000).setGranularity(GRANULARITY_PERMISSION_LEVEL);
+                CurrentLocationRequest currentLocationRequest =  currentLocationRequestBuilder.build();
+//                locationRequest = LocationRequest.create();
+//                locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+//                locationRequest.setInterval(1* 1000);
+//                locationCallback = new LocationCallback() {
+//                    @Override
+//                    public void onLocationResult(LocationResult locationResult) {
+//                        if (locationResult == null) {
+//                            return;
+//                        }
+//                        for (Location location : locationResult.getLocations()) {
+//                            if (location != null) {
+//
+//                                wayLatitude = location.getLatitude();
+//                                wayLongitude = location.getLongitude();
+//                                try {
+//                                    Thread.sleep(2*100);
+//                                } catch (InterruptedException e) {
+//                                    e.printStackTrace();
+//                                }
+//                                currentLocation = String.valueOf(location.getLatitude()) + ","+String.valueOf(location.getLongitude());
+//
+//                                Log.d("CurrentLocation",String.format(Locale.US, "%s -- %s", wayLatitude, wayLongitude));
+//                                mFusedLocationClient.removeLocationUpdates(locationCallback);
+//
+//                            }
+//                        }
+//
+//
+//
+//
+//                    }
+//                };
 
 
 
@@ -201,8 +170,66 @@ public class AddFragment extends Fragment implements AdapterView.OnItemSelectedL
                             locationRequestCode);
 
                 } else {
-                    // already permission granted
-                    mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback,null);
+//                    mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback,null);
+                    // already permission granted and get current location
+                    mFusedLocationClient.getCurrentLocation(currentLocationRequest, null)
+                            .addOnSuccessListener(result->{
+                                String myCurrentLocation = result.toString();
+                                Log.i("currentLocationHERE",myCurrentLocation);
+                                String uploadLocation = String.valueOf(result.getLatitude()) + ","+ String.valueOf(result.getLongitude());
+                                // change current location as readable address
+
+
+
+                                // completed
+                                DailyAidRequest  newRequest = new DailyAidRequest(title,uid,"",description,uploadLocation,type,completed);
+                                DARequest newDARequest = new DARequest(title,uid,"",description,uploadLocation,type,completed);
+                                //Upload to firebse
+//                                instanceDailyAidViewModel.createNewRequest(newRequest);
+
+                                try {
+                                    // Run a task specified by a Runnable Object asynchronously.
+                                    CompletableFuture<Void> future = CompletableFuture.runAsync(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            //read items from database
+                                            long id = instanceDailyAidViewModel.createRequest(newRequest);
+                                            newDARequest.setId((int)id);
+                                            System.out.println("I'll run in a separate thread than the main thread.");
+                                        }
+                                    });
+
+                                    // Block and wait for the future to complete
+                                    future.get();
+                                }
+                                catch(Exception ex) {
+                                    Log.e("readItemsFromDatabase", ex.getStackTrace().toString());
+                                }
+
+                                FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
+                                // add the request by id
+                                mFirestore.collection("requests").document(Integer.toString(newDARequest.getId()))
+                                        .set(newDARequest)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d(TAG, "DocumentSnapshot successfully written!");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w(TAG, "Error writing document", e);
+                                            }
+                                        });
+
+                                Intent intent = new Intent(root.getContext(), Navigator.class);
+                                startActivity(intent);
+                            })
+                            .addOnFailureListener(e -> {
+                                e.printStackTrace();
+                            });
+
                 }
 
             }

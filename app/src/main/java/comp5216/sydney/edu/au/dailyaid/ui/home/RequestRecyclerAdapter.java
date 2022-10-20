@@ -1,6 +1,8 @@
 package comp5216.sydney.edu.au.dailyaid.ui.home;
 
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +20,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import comp5216.sydney.edu.au.dailyaid.R;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DARequest;
@@ -31,9 +35,8 @@ public class RequestRecyclerAdapter extends RecyclerView.Adapter<RequestRecycler
 
     private List<DailyAidRequest> requestsList;
     private String TAG = "RequestRecycleAdapter";
-
+    private Geocoder geocoder;
     public  RequestRecyclerAdapter(){};
-
 
 
   public void setRequestsList(List<DailyAidRequest> newData) {
@@ -47,14 +50,47 @@ public class RequestRecyclerAdapter extends RecyclerView.Adapter<RequestRecycler
     View v =
         LayoutInflater.from(parent.getContext())
             .inflate(R.layout.request_layout, parent, false); // inflate recycler view layout
-    return new ViewHolder(v);
+      geocoder = new Geocoder(v.getContext(), Locale.getDefault());
+
+
+      return new ViewHolder(v);
   }
 
     @Override
     public void onBindViewHolder(@NonNull RequestRecyclerAdapter.ViewHolder holder, int position) {
         holder.title.setText(requestsList.get(position).getRequestName());
-        holder.description.setText(requestsList.get(position).getDescription());
-        holder.location.setText(requestsList.get(position).getLocation());
+        holder.description.setText(requestsList.get(position).getDescription().substring(0, Math.min(requestsList.get(position).getDescription().length(), 30)));
+        try{
+            String[] strLocation = requestsList.get(position).getLocation().split(",");
+            double lat = Double.parseDouble(strLocation[0]);
+            double longt = Double.parseDouble(strLocation[1]);
+            List<Address> addressList =
+                    geocoder.getFromLocation(lat, longt, 1);
+            // set current location
+
+            String strNum =  addressList.get(0).getFeatureName();
+            String strName =  addressList.get(0).getThoroughfare();
+            String city =  addressList.get(0).getLocality();
+            String postCode =  addressList.get(0).getPostalCode();
+
+            String street="";
+            if (strNum != null){
+                street += strNum+ " ";
+            }
+            if(strName !=null){
+                street += strName+ " ";
+            }
+            if(city !=null){
+                street += city+ " ";
+            }
+            if(postCode !=null){
+                street += postCode;
+            }
+            holder.location.setText(street);
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
         int id = requestsList.get(position).getId();
         String requesterId = requestsList.get(position).getRequesterId();
         final int fPosition = position;
