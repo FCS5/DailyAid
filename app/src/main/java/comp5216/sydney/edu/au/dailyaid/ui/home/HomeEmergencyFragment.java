@@ -1,9 +1,17 @@
 package comp5216.sydney.edu.au.dailyaid.ui.home;
 
+import static com.google.android.gms.location.Granularity.GRANULARITY_PERMISSION_LEVEL;
+import static com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY;
+
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,28 +22,42 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.location.CurrentLocationRequest;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import comp5216.sydney.edu.au.dailyaid.R;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DARequest;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidRequest;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidUser;
 import comp5216.sydney.edu.au.dailyaid.contentProvider.DailyAidViewModel;
+import comp5216.sydney.edu.au.dailyaid.databinding.FragmentHomeBinding;
 
 public class HomeEmergencyFragment extends Fragment {
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     RequestRecyclerAdapter adapter;
     private DailyAidViewModel instanceDailyAidViewModel;
-
-
+    private FragmentHomeBinding binding;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private CurrentLocationRequest.Builder currentLocationRequestBuilder;
+    private LocationCallback locationCallback;
+    private LocationRequest locationRequest;
+    private int locationRequestCode = 1000;
+    private double wayLatitude = 0.0, wayLongitude = 0.0;
+    private String devicelocation;
 
     public HomeEmergencyFragment() {
         // Required empty public constructor
@@ -70,62 +92,86 @@ public class HomeEmergencyFragment extends Fragment {
 
         adapter = new RequestRecyclerAdapter();
         recyclerView.setAdapter(adapter);
-
-//        DailyAidUser user = new DailyAidUser(
-//                "userName","adawdqw",true,
-//                0,0,100,0);
-//
-//        instanceDailyAidViewModel.createNewUser(user);
-//
-
         instanceDailyAidViewModel = new ViewModelProvider(this).get(DailyAidViewModel.class);
 
+        // get device location
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        currentLocationRequestBuilder =
+                new CurrentLocationRequest.Builder()
+                        .setDurationMillis(10 * 1000)
+                        .setPriority(PRIORITY_HIGH_ACCURACY)
+                        .setMaxUpdateAgeMillis(5 * 1000)
+                        .setGranularity(GRANULARITY_PERMISSION_LEVEL);
+        CurrentLocationRequest currentLocationRequest = currentLocationRequestBuilder.build();
+        // get location permission
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(
+                getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // reuqest for permission
+            ActivityCompat.requestPermissions(
+                    getActivity(),
+                    new String[] {
+                            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
+                    },
+                    locationRequestCode);
 
-//        DailyAidRequest request = new DailyAidRequest(
-//                "name",1, 1,"good job","here","test",false);
+        } else {
+            //            mFusedLocationClient.requestLocationUpdates(locationRequest,
+            // locationCallback,null);
 
-//        instanceDailyAidViewModel.createNewRequest(request);
+            // already permission granted and get current location
+            mFusedLocationClient
+                    .getCurrentLocation(currentLocationRequest, null)
+                    .addOnSuccessListener(
+                            result -> {
+                                devicelocation = String.valueOf(result.getLatitude())+","+String.valueOf(result.getLongitude());
+                                Log.i("currentLocationHERE", devicelocation);
+                                // implement viewmodel to access firebase
+                                FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
+                                mFirestore.collection("requests")
+                                        .whereEqualTo("type", "Emergency")
+                                        .whereEqualTo("completed",false)
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    List<DARequest> emergencyRequests = new ArrayList<DARequest>();
+                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                        DARequest request = document.toObject(DARequest.class);
+                                                        emergencyRequests.add(request);
+
+                                                        Log.d("EmergencyList",
+                                                                document.getId() + " => " + document.getData());
+                                                    }
+                                                    List<DARequest> showRequests = new ArrayList<DARequest>();
+                                                    for(DARequest emergency : emergencyRequests){
+                                                        if(getDistance(devicelocation,emergency.getLocation())<=5 && getDistance(devicelocation,emergency.getLocation())>=0){
+
+                                                            showRequests.add(emergency);
+                                                        }
+                                                    }
+                                                    adapter.setRequestsList(showRequests);
+                                                    adapter.notifyDataSetChanged();
+                                                } else {
+                                                    Log.d("EmergencyList", "Error getting documents: ", task.getException());
+                                                }
+                                            }
+                                        });
+                            })
+                    .addOnFailureListener(
+                            e -> {
+                                e.printStackTrace();
+                            });
+        }
 
 
 
-        // implement viewmodel to access room database
-//        instanceDailyAidViewModel.getListAllRequests().observe(getViewLifecycleOwner(),newData->{
-//            Log.i("newData", String.valueOf(newData));
-//            adapter.setRequestsList(newData);
-//            adapter.notifyDataSetChanged();
-//        });
 
-        // implement viewmodel to access firebase
-        FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
-        mFirestore.collection("requests")
-                .whereEqualTo("type", "Emergency")
-                .whereEqualTo("completed",false)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            List<DARequest> emergencyRequests = new ArrayList<DARequest>();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                DARequest request = document.toObject(DARequest.class);
-                                emergencyRequests.add(request);
 
-                                Log.d("EmergencyList",
-                                        document.getId() + " => " + document.getData());
-                            }
-                            List<DARequest> showRequests = new ArrayList<DARequest>();
-                            for(DARequest emergency : emergencyRequests){
-                                if(getDistance(devicelocation,emergency.getLocation())<=5 && getDistance(devicelocation,emergency.getLocation())>0){
-                                    showRequests.add(emergency);
-                                }
-                            }
-                            adapter.setRequestsList(showRequests);
-                            adapter.notifyDataSetChanged();
-                        } else {
-                            Log.d("EmergencyList", "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
+
 
 
 

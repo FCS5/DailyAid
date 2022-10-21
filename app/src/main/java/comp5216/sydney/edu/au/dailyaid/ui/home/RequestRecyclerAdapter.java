@@ -117,6 +117,7 @@ public class RequestRecyclerAdapter extends RecyclerView.Adapter<RequestRecycler
                     String uid;
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     uid = user.getUid();
+                    assert request != null;
                     if(request.getAccepterId().length() != 0 && ! request.getAccepterId().equals(uid)){
                         // Toast
                         Snackbar.make(v,"The request has been accepted.",
