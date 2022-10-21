@@ -37,6 +37,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import org.junit.validator.TestClassValidator;
 import org.w3c.dom.Text;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -216,6 +217,37 @@ public class RequestDetailFragment extends AppCompatActivity {
                                 });
                             }
                         });
+                        accept.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                // update request information (completed -> true)
+                                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        DARequest request = documentSnapshot.toObject(DARequest.class);
+                                        request.setCompleted(true);
+                                        // set the request by id
+                                        mFirestore.collection("requests").document(Integer.toString(id))
+                                                .set(request)
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        finish();
+                                                        Log.d(TAG, "DocumentSnapshot successfully update!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w(TAG, "Error deleting document", e);
+                                                    }
+                                                });
+
+                                    }
+                                });
+                            }
+                        });
+
                     }
                 }
                 // current user is the accepter
@@ -237,9 +269,10 @@ public class RequestDetailFragment extends AppCompatActivity {
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
+
                                                     // update accepter information ( credit-1, fail+1)
                                                     mFirestore.collection("users")
-                                                            .document(request.getAccepterId())
+                                                            .document(user.getUid())
                                                             .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                                                 @Override
                                                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -247,7 +280,7 @@ public class RequestDetailFragment extends AppCompatActivity {
                                                                     currentUser.setNumFail(currentUser.getNumFail()+1);
                                                                     currentUser.setCredit(currentUser.getCredit()-1);
                                                                     mFirestore.collection("users")
-                                                                            .document(request.getAccepterId())
+                                                                            .document(user.getUid())
                                                                             .set(currentUser)
                                                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                 @Override
@@ -281,6 +314,7 @@ public class RequestDetailFragment extends AppCompatActivity {
                     });
                     // complete button
                     accept.setOnClickListener(new View.OnClickListener() {
+
                         @Override
                         public void onClick(View view) {
                             // update request information (completed -> true)
@@ -390,15 +424,21 @@ public class RequestDetailFragment extends AppCompatActivity {
 
                     }
                 });
-//                DocumentReference docR1 =
-//                        mFirestore.collection("users").document(request.getAccepterId());
-//                docR1.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//                            @Override
-//                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                                DAUser user = documentSnapshot.toObject(DAUser.class);
-//                                detailAccepter.setText(String.valueOf(user.getUserName()));
-//                            }
-//                        });
+                try{
+                                    DocumentReference docR1 =
+                        mFirestore.collection("users").document(request.getAccepterId());
+                docR1.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                DAUser user = documentSnapshot.toObject(DAUser.class);
+                                detailAccepter.setText(String.valueOf(user.getUserName()));
+                            }
+                        });
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+
             }
 
         });

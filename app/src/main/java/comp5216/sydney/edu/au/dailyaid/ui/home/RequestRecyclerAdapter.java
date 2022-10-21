@@ -120,8 +120,11 @@ public class RequestRecyclerAdapter extends RecyclerView.Adapter<RequestRecycler
                     assert request != null;
                     if(request.getAccepterId().length() != 0 && ! request.getAccepterId().equals(uid)){
                         // Toast
-                        Snackbar.make(v,"The request has been accepted.",
-                                Snackbar.LENGTH_LONG).setAction("action",null).show();
+//                        Snackbar.make(v,"The request has been accepted.",
+//                                Snackbar.LENGTH_LONG).setAction("action",null).show();
+                        Intent intent = new Intent(v.getContext(), RequestDetailFragment.class);
+                        intent.putExtra("requestID",id);
+                        v.getContext().startActivity(intent);
                     } else{
                         // start activity
                         Intent intent = new Intent(v.getContext(), RequestDetailFragment.class);
